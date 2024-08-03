@@ -20,11 +20,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/survey" element={<Survey />} />
-<<<<<<< HEAD
-        <Route element={<PrivateRoute />}>
-=======
         <Route element={<PrivateRoute />} >
->>>>>>> 902bd37 (Make the dashboard private)
         <Route path="/dashboard" element={<Dashboard />} />
         </Route>
         <Route path="/sign-in" element={<SignIn />} />
