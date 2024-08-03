@@ -11,9 +11,4 @@ export default function ThemeProvider({children}) {
           {children}
         </div>  
     </div>
-<<<<<<< HEAD
-
-=======
->>>>>>> a2e482f (Complete the)
-)
-   }
+)}
