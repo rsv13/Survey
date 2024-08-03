@@ -10,9 +10,9 @@ export const signup = async (req, res, next) => {
     !username ||
     !email ||
     !password ||
-    !username === "" ||
-    !email === "" ||
-    !password === ""
+    username === "" ||
+    email === "" ||
+    password === ""
   ) {
     next(errorHandler(400, "All fields are required"));
   }
@@ -36,18 +36,18 @@ export const signup = async (req, res, next) => {
 export const signin = async (req, res, next) => {
   const { email, password } = req.body;
 
-  if (!email || !password || !email === "" || password === "") {
+  if (!email || !password || email === "" || password === "") {
     return next(errorHandler(400, "Please provide email and password"));
   }
   try {
-    const validUser = await User.findOne({ email: email });
+    const validUser = await User.findOne({ email });
     if (!validUser) {
       return next(errorHandler(404, "Invalid email or password"));
     }
 
     const validPassword = bcryptjs.compareSync(password, validUser.password);
     if (!validPassword) {
-      next(errorHandler(404, "Invalid email or password"));
+      return next(errorHandler(404, "Invalid email or password"));
     }
 
     const token = jwt.sign(

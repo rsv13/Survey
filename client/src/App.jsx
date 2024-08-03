@@ -20,8 +20,8 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/survey" element={<Survey />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/sign-up" element={<SignUp />} />
         <Route path="/publication" element={<Publication />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/about" element={<About />} />
