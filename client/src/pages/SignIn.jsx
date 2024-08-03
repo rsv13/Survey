@@ -44,7 +44,7 @@ export default function SignIn() {
 
   return (
     <div className='min-h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-800'>
-      <div className='max-w-4xl w-full p-8 bg-white shadow-lg rounded-lg'>
+      <div className='max-w-4xl w-full p-8 bg-white dark:bg-gray-700 shadow-lg rounded-lg'>
         {/* Header */}
         <div className='text-center mb-8'>
           <Link to='/' className='font-bold text-4xl dark:text-white'>
@@ -71,12 +71,12 @@ export default function SignIn() {
         <div className='text-center'>
           <form className='inline-block w-full max-w-md mx-auto' onSubmit={handleSubmit}>
             <div className='mb-4'>
-              <Label htmlFor='email' value="Email" />
-              <TextInput type='email' placeholder='name@company.com' id='email' className='w-full' onChange={handleChange}/>
+              <Label htmlFor='email' value="Email" /><span className="text-red-500">*</span>
+              <TextInput type='email' placeholder='name@company.com' id='email' required className='w-full'  onChange={handleChange} />
             </div>
             <div className='mb-4'>
-              <Label htmlFor='password' value="Password" />
-              <TextInput type='password' placeholder='********' id='password' className='w-full' onChange={handleChange}/>
+              <Label htmlFor='password' value="Password" /><span className="text-red-500">*</span>
+              <TextInput type='password' placeholder='********' id='password' required className='w-full' onChange={handleChange}/>
             </div>
             <Button gradientDuoTone='purpleToPink' className='w-full mt-4' type='submit' disabled={loading}>
               {

@@ -45,7 +45,7 @@ export default function SignUp() {
 
   return (
     <div className='min-h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-800'>
-      <div className='max-w-4xl w-full p-8 bg-white shadow-lg rounded-lg'>
+      <div className='max-w-4xl w-full p-8 bg-white dark:bg-gray-700 shadow-lg rounded-lg'>
         {/* Header */}
         <div className='text-center mb-8'>
           <Link to='/' className='font-bold text-4xl dark:text-white'>
@@ -67,7 +67,7 @@ export default function SignUp() {
           </p>
           <p className='mb-4'>
             Join us in making a meaningful impact on our community's quality of life. 
-            <span className='font-bold text-purple-600 dark:text-purple-400'> Sign up now</span> 
+            <span className='font-bold text-purple-600 dark:text-purple-400'> Sign up now </span> 
             to take the survey and be a part of this important initiative!
           </p>
         </div>
@@ -75,15 +75,15 @@ export default function SignUp() {
         <div className='text-center'>
           <form className='inline-block w-full max-w-md mx-auto' onSubmit={handleSubmit}>
             <div className='mb-4'>
-              <Label htmlFor='username' value="Your username" />
+              <Label htmlFor='username' value="Your username" /><span className="text-red-500">*</span>
               <TextInput type='text' placeholder='username' id='username' className='w-full' onChange={handleChange}/>
             </div>
             <div className='mb-4'>
-              <Label htmlFor='email' value="Email" />
+              <Label htmlFor='email' value="Email" /><span className="text-red-500">*</span>
               <TextInput type='email' placeholder='name@company.com' id='email' className='w-full' onChange={handleChange}/>
             </div>
             <div className='mb-4'>
-              <Label htmlFor='password' value="Password" />
+              <Label htmlFor='password' value="Password" /><span className="text-red-500">*</span>
               <TextInput type='password' placeholder='********' id='password' className='w-full' onChange={handleChange}/>
             </div>
             <Button gradientDuoTone='purpleToPink' className='w-full mt-4' type='submit' disabled={loading}>
