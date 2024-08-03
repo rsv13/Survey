@@ -39,6 +39,7 @@ export const signin = async (req, res, next) => {
   if (!email || !password || email === "" || password === "") {
     return next(errorHandler(400, "Please provide email and password"));
   }
+
   try {
     const validUser = await User.findOne({ email });
     if (!validUser) {
