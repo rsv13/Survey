@@ -2,6 +2,7 @@ import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import OAuth from '../components/OAuth';
 import { signInFailure, signInStart, signInSuccess } from '../redux/user/userSlice';
 
 export default function SignIn() {
@@ -87,10 +88,11 @@ export default function SignIn() {
                   ) : (  'Sign In' )
               }
             </Button>
+            <OAuth />
           </form>
           <div className='mt-4'>
             <span>Don't have an account? 
-              <Link to='/signup' className='font-bold text-purple-600 dark:text-purple-400 ml-1'> Sign Up</Link>
+              <Link to='/sign-up' className='font-bold text-purple-600 dark:text-purple-400 ml-1'> Sign Up</Link>
             </span>
           </div>
           { errorMessage && ( 
