@@ -1,9 +1,106 @@
-import React from 'react'
+import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function SignIn() {
+
+  const [formData, setFormData] = useState({});
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.id]: e.target.value.trim() })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if(!formData.email || !formData.password) {
+      return setErrorMessage('Please fill out all fields');
+    }
+    try {
+      setLoading(true);
+      setErrorMessage(null);
+      const res = await fetch('/api/auth/signin', {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if(data.success === false) {
+        return setErrorMessage(data.message)
+      } 
+      setLoading(false);
+      if(res.ok) {
+        setErrorMessage(null);
+        navigate('/dashboard'); // Update this to the correct route after sign in
+      }
+    } catch (error){
+      setErrorMessage(error.message);
+      setLoading(false);
+    }
+  }
+
   return (
-    <div>
-      Signin
+    <div className='min-h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-800'>
+      <div className='max-w-4xl w-full p-8 bg-white shadow-lg rounded-lg'>
+        {/* Header */}
+        <div className='text-center mb-8'>
+          <Link to='/' className='font-bold text-4xl dark:text-white'>
+            <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>
+              SWSWBS
+            </span>
+            <span className='ml-2 text-gray-800 dark:text-gray-200'>Survey</span>
+          </Link>
+        </div>
+
+        <div className='text-lg leading-relaxed text-gray-700 dark:text-gray-300 text-center'>
+          <p className='mb-4 text-xl font-semibold'>
+            Welcome to the South Wales Social Well-being Survey!
+          </p>
+          <p className='mb-4'>
+            Sign in to participate in our insightful survey designed with the 
+            <span className='font-bold text-indigo-600 dark:text-indigo-400'> South Wales Social Well-being Scale (SWSWBS)</span>.
+          </p>
+          <p className='mb-4'>
+            Your input helps us shape and enhance health policies and practices to address the multifaceted aspects of well-being.
+          </p>
+        </div>
+
+        <div className='text-center'>
+          <form className='inline-block w-full max-w-md mx-auto' onSubmit={handleSubmit}>
+            <div className='mb-4'>
+              <Label htmlFor='email' value="Email" />
+              <TextInput type='email' placeholder='name@company.com' id='email' className='w-full' onChange={handleChange}/>
+            </div>
+            <div className='mb-4'>
+              <Label htmlFor='password' value="Password" />
+              <TextInput type='password' placeholder='********' id='password' className='w-full' onChange={handleChange}/>
+            </div>
+            <Button gradientDuoTone='purpleToPink' className='w-full mt-4' type='submit' disabled={loading}>
+              {
+                loading ? (
+                  <>
+                  <Spinner size='sm' />
+                    <span className='p-3'> Loading... </span>
+                  </>
+                  ) : (  'Sign In' )
+              }
+            </Button>
+          </form>
+          <div className='mt-4'>
+            <span>Don't have an account? 
+              <Link to='/signup' className='font-bold text-purple-600 dark:text-purple-400 ml-1'> Sign Up</Link>
+            </span>
+          </div>
+          { errorMessage && ( 
+            <Alert className='mt-4' color='failure'>
+              {errorMessage}
+              </Alert>
+          )}
+        </div>
+      </div>
     </div>
-  )
+  );
 }
