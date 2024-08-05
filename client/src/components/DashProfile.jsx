@@ -2,17 +2,18 @@ import { Alert, Button, Modal, TextInput } from 'flowbite-react';
 import React, { useState } from 'react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import { deleteUserFailure, deleteUserStart, deleteUserSuccess, signoutSuccess, updateFailure, updateStart, updateSuccess } from '../redux/user/userSlice';
 
 export default function DashProfile() {
 
-    const { currentUser } = useSelector(state => state.user );
-    const { error } = useSelector(state => state.user);
+    const { currentUser, error, loading } = useSelector(state => state.user );
     const [formData, setFormData] = useState({});
     const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
     const [updateUserError, setUpdateUserError] = useState(null);
     const [ showModal, setShowModal] = useState(false);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
       setFormData({ ...formData, [e.target.id] : e.target.value });
@@ -95,9 +96,20 @@ export default function DashProfile() {
                 <TextInput type='text' id='username' placeholder='username' defaultValue={currentUser.username} onChange={handleChange}/>
                 <TextInput type='email' id='email' placeholder='email' defaultValue={currentUser.email} onChange={handleChange}/>
                 <TextInput type='password' id='password' placeholder='********' onChange={handleChange}/>
-                <Button type='submit' gradientDuoTone='purpleToBlue' outline onClick={handleSubmit}>
+                <Button type='submit' gradientDuoTone='purpleToBlue' outline onClick={handleSubmit} disabled={loading} > 
+                { loading ? 'Loading...' : 'Update'}
                   Update
                   </Button>
+                  {
+                    currentUser && (
+                      <Link to='/survey'>
+                      <Button type='button' gradientDuoTone='purpleToPink'
+                      className='w-full' >
+                        Take the survey
+                      </Button>
+                      </Link>
+                    )
+                  }
             </form>
             <div className='text-red-500 flex justify-between mt-5'>
               <span onClick={() => setShowModal(true)} className='cursor-pointer'>Delete Account</span>

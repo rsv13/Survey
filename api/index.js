@@ -1,8 +1,10 @@
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
 import authRoutes from "./routes/auth.route.js";
+import surveyRoutes from "./routes/survey.route.js";
 import userRoutes from "./routes/user.route.js";
 
 dotenv.config();
@@ -10,6 +12,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 mongoose
   .connect(process.env.MONGO)
@@ -26,6 +29,7 @@ app.listen(3000, () => {
 
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/survey", surveyRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

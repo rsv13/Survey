@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    surveysSubmitted: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
