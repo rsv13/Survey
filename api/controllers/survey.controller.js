@@ -41,3 +41,30 @@ export const surveyQuestion = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getSurveys = async (req, res, next) => {
+  try {
+    const surveys = await Survey.find({}); // Retrieve all surveys
+
+    const totalSurvey = await Survey.countDocuments(); // Count total surveys
+    const now = new Date();
+
+    const oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
+
+    const lastMonthSurvey = await Survey.countDocuments({
+      updatedAt: { $gte: oneMonthAgo, $lt: now },
+    });
+
+    res.status(200).json({
+      surveys,
+      totalSurvey,
+      lastMonthSurvey,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
