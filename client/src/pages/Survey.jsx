@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const SurveyForm = () => {
   const { currentUser } = useSelector(state => state.user);
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: currentUser.email,
     gender: '',
@@ -76,6 +77,7 @@ const SurveyForm = () => {
     const surveyData = {
       ...formData,
       surveyAnswers,
+      user: currentUser._id,
     };
 
     try {
@@ -126,7 +128,7 @@ const SurveyForm = () => {
               <Label htmlFor='email' value='Email' />
               <TextInput
                 id='email'
-                value={currentUser.email} 
+                value={formData.email} // Use formData.email here
                 readOnly
                 disabled
               />
