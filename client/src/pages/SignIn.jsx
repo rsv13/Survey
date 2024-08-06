@@ -48,7 +48,7 @@ export default function SignIn() {
         {/* Header */}
         <div className='text-center mb-8'>
           <Link to='/' className='font-bold text-4xl dark:text-white'>
-            <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>
+            <span className='px-2 py-1  bg-red-700 rounded-lg text-white'>
               SWSWBS
             </span>
             <span className='ml-2 text-gray-800 dark:text-gray-200'>Survey</span>
@@ -78,7 +78,7 @@ export default function SignIn() {
               <Label htmlFor='password' value="Password" /><span className="text-red-500">*</span>
               <TextInput type='password' placeholder='********' id='password' required className='w-full' onChange={handleChange}/>
             </div>
-            <Button gradientDuoTone='purpleToPink' className='w-full mt-4' type='submit' disabled={loading}>
+            <Button className='w-full mt-4  bg-red-700' type='submit' disabled={loading} outline>
               {
                 loading ? (
                   <>
