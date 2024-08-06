@@ -91,7 +91,6 @@ const SurveyForm = () => {
       setLoading(false);
 
       if (!res.ok) {
-        console.log(data)
         setError(data.message || 'Failed to submit survey. Please try again.');
         return;
       }
@@ -129,7 +128,7 @@ const SurveyForm = () => {
               <Label htmlFor='email' value='Email' />
               <TextInput
                 id='email'
-                value={formData.email} // Use formData.email here
+                value={formData.email}
                 readOnly
                 disabled
               />
@@ -260,11 +259,6 @@ const SurveyForm = () => {
             >
               {loading ? 'Submitting...' : 'Submit Survey'}
             </Button>
-            {error && unansweredQuestions.length > 0 && (
-              <p className='text-red-500 text-center mt-4'>
-                Please answer all survey questions before submitting.
-              </p>
-            )}
           </form>
         )}
         {submitted && !error && (

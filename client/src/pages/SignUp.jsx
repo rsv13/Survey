@@ -1,115 +1,72 @@
-import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import OAuth from '../components/OAuth';
+import React from 'react';
 
-export default function SignUp() {
-
-  const [formData, setFormData] = useState({});
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  const navigate = useNavigate();
-
-
-  const handleChange = (e) => {
-    setFormData({...formData, [e.target.id]: e.target.value.trim() })
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if(!formData.username  || !formData.email || !formData.password) {
-      return setErrorMessage('Please fill out all fields');
-    }
-    try {
-      setLoading(true);
-      setErrorMessage(null);
-      const res = await fetch('/api/auth/signup', {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if(data.success === false) {
-        return setErrorMessage(data.message)
-      } setLoading(false);
-      if(res.ok) {
-        setErrorMessage(null);
-        navigate('/signin');
-      }
-    } catch (error){
-      setErrorMessage(error.message);
-      setLoading(false);
-    }
-  }
-
+export default function HomePage() {
   return (
-    <div className='min-h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-800'>
-      <div className='max-w-4xl w-full p-8 bg-white dark:bg-gray-700 shadow-lg rounded-lg'>
-        {/* Header */}
-        <div className='text-center mb-8'>
-          <Link to='/' className='font-bold text-4xl dark:text-white'>
-            <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>
-              SWSWBS
-            </span>
-            <span className='ml-2 text-gray-800 dark:text-gray-200'>Survey</span>
-          </Link>
-        </div>
-
-        <div className='text-lg leading-relaxed text-gray-700 dark:text-gray-300 text-center'>
-          <p className='mb-4'>
-            We invite you to participate in our insightful survey designed with the 
-            <span className='font-bold text-indigo-600 dark:text-indigo-400'> South Wales Social Well-being Scale (SWSWBS)</span> 
-            to uncover the multifaceted aspects of social well-being.
-          </p>
-          <p className='mb-4'>
-            Your valuable input will help shape and enhance health policies and practices, ensuring they comprehensively address the physical, mental, and social dimensions of well-being.
-          </p>
-          <p className='mb-4'>
-            Join us in making a meaningful impact on our community's quality of life. 
-            <span className='font-bold text-purple-600 dark:text-purple-400'> Sign up now </span> 
-            to take the survey and be a part of this important initiative!
-          </p>
-        </div>
-
-        <div className='text-center'>
-          <form className='inline-block w-full max-w-md mx-auto' onSubmit={handleSubmit}>
-            <div className='mb-4'>
-              <Label htmlFor='username' value="Your username" /><span className="text-red-500">*</span>
-              <TextInput type='text' placeholder='username' id='username' className='w-full' onChange={handleChange}/>
+    <div className='min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200'>
+      <header className='bg-gray-800 text-white text-center py-12'>
+        <h1 className='text-4xl font-bold'>
+          Welcome to the South Wales Social Well-being Scale
+        </h1>
+        <p className='mt-4 text-lg px-4'>
+          Discover how our tool measures the quality of your social wellbeing through the resources you possess, 
+          your perceived ability to engage in and enjoy your social world, and your capacity for human functioning and flourishing.
+        </p>
+      </header>
+      
+      <main className='p-6 flex-1'>
+        <section className='mb-12'>
+          <div className='flex flex-col md:flex-row gap-8 justify-center'>
+            <div className='flex-1 max-w-lg mx-auto'>
+              <h2 className='text-2xl font-semibold mb-4'>Understanding Social Well-being</h2>
+              <div className='aspect-w-16 aspect-h-9'>
+                <iframe
+                  width='560'
+                  height='315'
+                  src='https://www.youtube.com/embed/Pyd3r0xTkI0'
+                  title='Understanding Social Well-being'
+                  frameBorder='0'
+                  allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                  allowFullScreen
+                  className='rounded-lg shadow-lg'
+                ></iframe>
+              </div>
             </div>
-            <div className='mb-4'>
-              <Label htmlFor='email' value="Email" /><span className="text-red-500">*</span>
-              <TextInput type='email' placeholder='name@company.com' id='email' className='w-full' onChange={handleChange}/>
+            
+            <div className='flex-1 max-w-lg mx-auto'>
+              <h2 className='text-2xl font-semibold mb-4'>Building Strong Social Connections</h2>
+              <div className='aspect-w-16 aspect-h-9'>
+                <iframe
+                  width='560'
+                  height='315'
+                  src='https://www.youtube.com/embed/bfCZBXQYSlw'
+                  title='Building Strong Social Connections'
+                  frameBorder='0'
+                  allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                  allowFullScreen
+                  className='rounded-lg shadow-lg'
+                ></iframe>
+              </div>
             </div>
-            <div className='mb-4'>
-              <Label htmlFor='password' value="Password" /><span className="text-red-500">*</span>
-              <TextInput type='password' placeholder='********' id='password' className='w-full' onChange={handleChange}/>
-            </div>
-            <Button gradientDuoTone='purpleToPink' className='w-full mt-4' type='submit' disabled={loading}>
-              {
-                loading ? (
-                  <>
-                  <Spinner size='sm' />
-                    <span className='p-3'> Loading... </span>
-                  </>
-                  ) : (  'Sign Up' )
-              }
-            </Button>
-            <OAuth />
-          </form>
-          <div className='mt-4'>
-            <span>Have an account? 
-              <Link to='/sign-in' className='font-bold text-purple-600 dark:text-purple-400 ml-1'> Sign In</Link>
-            </span>
           </div>
-          { errorMessage && ( 
-            <Alert className='mt-4' color='failure'>
-              {errorMessage}
-              </Alert>
-          )}
-        </div>
-      </div>
+        </section>
+        
+        <section className='bg-gray-200 p-6 rounded-lg shadow-md max-w-3xl mx-auto'>
+          <h2 className='text-2xl font-semibold mb-4'>Why Social Well-being Matters</h2>
+          <p className='mb-4'>
+            Social well-being is crucial for a fulfilling and balanced life. It encompasses your ability to connect with others, engage 
+            in meaningful relationships, and contribute positively to your community.
+          </p>
+          <ul className='list-disc list-inside pl-5'>
+            <li>Enhances mental and emotional health</li>
+            <li>Strengthens community bonds</li>
+            <li>Promotes personal growth and development</li>
+          </ul>
+        </section>
+      </main>
+      
+      <footer className='bg-gray-800 text-white text-center py-4'>
+        <p>&copy; 2024 South Wales Social Well-being Scale. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
