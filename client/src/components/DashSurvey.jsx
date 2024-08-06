@@ -12,9 +12,14 @@ export default function DashSurvey() {
   const [selectedSurveyId, setSelectedSurveyId] = useState(null);
   const navigate = useNavigate();
 
+  // Function to fetch surveys
   const fetchSurveys = async () => {
+    if (!currentUser) {
+      console.error("Current user is not available.");
+      return;
+    }
+
     try {
-      // Fetch all surveys for admins or only the current user's surveys for non-admins
       const url = currentUser.isAdmin
         ? '/api/survey/getSurveys'
         : `/api/survey/getSurveys?userId=${currentUser._id}`;
@@ -28,43 +33,62 @@ export default function DashSurvey() {
           setShowMore(false);
         }
       } else {
-        console.error("Failed to fetch surveys:", data.message);
+        console.error("Failed to fetch surveys:", data.message || res.statusText);
       }
     } catch (error) {
       console.error("Error fetching surveys:", error.message);
     }
   };
 
+  // Fetch surveys on component mount or when currentUser changes
   useEffect(() => {
     fetchSurveys();
-  }, [currentUser._id, currentUser.isAdmin]);
+  }, [currentUser]);
 
+  // Function to handle view click
   const handleViewClick = (survey) => {
     navigate('/survey-details', { state: { survey } });
   };
 
+  // Function to handle delete button click
   const handleDeleteClick = (surveyId) => {
     setSelectedSurveyId(surveyId);
     setShowModal(true);
   };
 
+  // Function to handle survey deletion
   const handleDelete = async () => {
+    if (!currentUser) {
+      console.error("Current user is not available for deletion.");
+      setShowModal(false);
+      return;
+    }
+
+    setShowModal(false);
+
     try {
       const res = await fetch(`/api/survey/deleteSurvey/${selectedSurveyId}`, {
         method: 'DELETE',
       });
       const data = await res.json();
-      if (res.ok) {
-        setUserSurveys(userSurveys.filter(survey => survey._id !== selectedSurveyId));
-        setShowModal(false);
-        setSelectedSurveyId(null);
+
+      if (!res.ok) {
+        console.error("Failed to delete survey:", data.message || res.statusText);
       } else {
-        console.error("Failed to delete survey:", data.message);
+        setUserSurveys(prevSurveys =>
+          prevSurveys.filter(survey => survey._id !== selectedSurveyId)
+        );
       }
     } catch (error) {
       console.error("Error deleting survey:", error.message);
+    } finally {
+      setSelectedSurveyId(null);
     }
   };
+
+  if (!currentUser) {
+    return <p>Loading user information...</p>;
+  }
 
   return (
     <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
@@ -79,7 +103,7 @@ export default function DashSurvey() {
             <Table.HeadCell>Education</Table.HeadCell>
             <Table.HeadCell>Place</Table.HeadCell>
             <Table.HeadCell>View</Table.HeadCell>
-            {currentUser.isAdmin && <Table.HeadCell>Delete</Table.HeadCell>}
+            {currentUser?.isAdmin && <Table.HeadCell>Delete</Table.HeadCell>}
           </Table.Head>
           <Table.Body className='divide-y'>
             {userSurveys.map((survey) => (
@@ -98,7 +122,7 @@ export default function DashSurvey() {
                 <Table.Cell>
                   <Button onClick={() => handleViewClick(survey)}>View</Button>
                 </Table.Cell>
-                {currentUser.isAdmin && (
+                {currentUser?.isAdmin && (
                   <Table.Cell>
                     <Button onClick={() => handleDeleteClick(survey._id)} color="failure">Delete</Button>
                   </Table.Cell>

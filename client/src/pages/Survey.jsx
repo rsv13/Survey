@@ -91,6 +91,7 @@ const SurveyForm = () => {
       setLoading(false);
 
       if (!res.ok) {
+        console.log(data)
         setError(data.message || 'Failed to submit survey. Please try again.');
         return;
       }
