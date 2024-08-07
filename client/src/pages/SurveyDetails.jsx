@@ -18,10 +18,10 @@ const SurveyDetails = () => {
       <h1 className='text-2xl font-semibold mb-4'>Survey Details</h1>
       <form className='space-y-6'>
         <div>
-          <Label htmlFor='email' value='Email' />
+          <Label htmlFor='surveyUsername' value='Survey Username' />
           <TextInput
-            id='email'
-            value={survey.email}
+            id='surveyUsername'
+            value={survey.surveyUsername || ''}
             readOnly
           />
         </div>

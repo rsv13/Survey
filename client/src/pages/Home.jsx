@@ -12,7 +12,7 @@ export default function HomePage() {
             Discover how our tool measures the quality of your social well-being through the resources you possess,
             your perceived ability to engage in and enjoy your social world, and your capacity for human functioning and flourishing.
           </p>
-          <Link to='/signup'>
+          <Link to='/sign-up'>
             <button className='bg-white text-teal-500 font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-800'>
               Sign Up
             </button>

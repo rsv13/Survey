@@ -10,10 +10,6 @@ const surveySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    email: {
-      type: String,
-      required: true,
-    },
     profession: {
       type: String,
       required: true,
@@ -45,6 +41,10 @@ const surveySchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+    },
+    surveyUsername: {
+      type: String,
+      required: true,
     },
     surveyIdentifier: {
       type: String,

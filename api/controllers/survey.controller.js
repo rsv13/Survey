@@ -21,34 +21,36 @@ export const surveyQuestion = async (req, res, next) => {
     return next(errorHandler(400, "User ID is required"));
   }
 
-  // Ensure surveyIdentifier is generated uniquely
-  const surveyIdentifier = generateUniqueSurveyIdentifier();
-
-  // Create a new survey document
-  const newSurvey = new Survey({
-    ...surveyData,
-    surveyIdentifier,
-  });
-
   try {
+    // Ensure surveyIdentifier is generated uniquely
+    const surveyIdentifier = generateUniqueSurveyIdentifier();
+
+    // Retrieve user to get the surveyUsername
+    const user = await User.findById(surveyData.user);
+    if (!user) {
+      return next(errorHandler(400, "User not found."));
+    }
+
+    // Create a new survey document
+    const newSurvey = new Survey({
+      ...surveyData,
+      surveyIdentifier,
+      surveyUsername: user.surveyUsername, // Add surveyUsername to the survey
+    });
+
     // Save the survey to the database
     await newSurvey.save();
 
-    // Update the user record if user ID is provided
-    const userId = surveyData.user;
-    if (userId) {
-      // Check if the user exists before updating
-      const user = await User.findById(userId);
-      if (user) {
-        // Increment the count of surveys submitted by the user
-        await User.findByIdAndUpdate(userId, { $inc: { surveysSubmitted: 1 } });
-      } else {
-        return next(errorHandler(400, "User not found."));
-      }
-    }
+    // Increment the count of surveys submitted by the user
+    await User.findByIdAndUpdate(user._id, { $inc: { surveysSubmitted: 1 } });
 
-    res.status(201).json(newSurvey);
+    res.status(201).json({
+      success: true,
+      message: "Survey submitted successfully",
+      survey: newSurvey,
+    });
   } catch (error) {
+    console.error("Error saving survey:", error); // Add logging
     next(error);
   }
 };
@@ -60,7 +62,8 @@ export const getSurveys = async (req, res, next) => {
   try {
     const query = userId ? { user: userId } : {}; // Filter by userId if provided
 
-    const surveys = await Survey.find(query); // Retrieve surveys based on query
+    // Retrieve surveys and include surveyUsername
+    const surveys = await Survey.find(query).populate("user", "surveyUsername");
 
     const totalSurvey = await Survey.countDocuments(query); // Count total surveys based on query
 

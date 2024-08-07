@@ -1,5 +1,5 @@
 import { Alert, Button, Checkbox, Label, Radio, Select, TextInput } from 'flowbite-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,7 +8,7 @@ const SurveyForm = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: currentUser.email,
+    surveyUsername: currentUser.surveyUsername, // Updated here
     gender: '',
     ageGroup: '',
     profession: '',
@@ -24,6 +24,10 @@ const SurveyForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Optionally set the formData if needed
+  }, [currentUser.surveyUsername]);
 
   // Handle changes to the form fields
   const handleFormChange = (e) => {
@@ -125,10 +129,10 @@ const SurveyForm = () => {
               Welcome! We appreciate your participation in our survey. Your responses will help us better understand community needs and improve our services. Please provide your information and consent to proceed to the survey questions.
             </p>
             <div>
-              <Label htmlFor='email' value='Email' />
+              <Label htmlFor='surveyUsername' value='Survey Username' />
               <TextInput
-                id='email'
-                value={formData.email}
+                id='surveyUsername'
+                value={formData.surveyUsername}
                 readOnly
                 disabled
               />

@@ -30,12 +30,13 @@ export default function SignUp() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if(data.success === false) {
-        return setErrorMessage(data.message)
-      } setLoading(false);
+      setLoading(false);
       if(res.ok) {
         setErrorMessage(null);
-        navigate('/signin');
+        alert(data.message); // Show success message
+        navigate('/sign-in'); // Redirect to sign-in page
+      } else {
+        setErrorMessage(data.message);
       }
     } catch (error){
       setErrorMessage(error.message);

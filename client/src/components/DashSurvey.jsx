@@ -96,7 +96,7 @@ export default function DashSurvey() {
         <Table hoverable className='shadow-md'>
           <Table.Head>
             <Table.HeadCell>Date Updated</Table.HeadCell>
-            <Table.HeadCell>Email</Table.HeadCell>
+            <Table.HeadCell>Survey Username</Table.HeadCell>
             <Table.HeadCell>Gender</Table.HeadCell>
             <Table.HeadCell>Age Group</Table.HeadCell>
             <Table.HeadCell>Profession</Table.HeadCell>
@@ -109,7 +109,7 @@ export default function DashSurvey() {
             {userSurveys.map((survey) => (
               <Table.Row key={survey._id} className='bg-white dark:border-gray-700 dark:bg-gray-800'>
                 <Table.Cell>{new Date(survey.updatedAt).toLocaleDateString()}</Table.Cell>
-                <Table.Cell>{survey.email}</Table.Cell>
+                <Table.Cell>{survey.surveyUsername || 'N/A'}</Table.Cell>
                 <Table.Cell>{survey.gender || 'N/A'}</Table.Cell>
                 <Table.Cell>{survey.ageGroup || 'N/A'}</Table.Cell>
                 <Table.Cell>{survey.profession || 'N/A'}</Table.Cell>
