@@ -1,71 +1,78 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
-export default function HomePage() {
+export default function HomePage(){
+
+  const handleSurveyClick = () => {
+    navigate('/sign-up'); // Redirect to the sign-up page
+  };
+
   return (
-    <div className='bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100'>
+    <div className="bg-gray-50 text-gray-900">
       {/* Hero Section */}
-      <section className='bg-gradient-to-r from-teal-400 to-cyan-500 text-white py-20'>
-        <div className='container mx-auto px-6 text-center'>
-          <h1 className='text-4xl font-bold mb-4'>Welcome to the South Wales Social Well-being Scale</h1>
-          <p className='text-lg mb-6'>
-            Discover how our tool measures the quality of your social well-being through the resources you possess,
-            your perceived ability to engage in and enjoy your social world, and your capacity for human functioning and flourishing.
+      <section className="bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white py-20">
+        <div className="container mx-auto px-6 text-center">
+          <h1 className="text-4xl font-bold mb-4">
+            Welcome to the South Wales Social Well-being Scale
+          </h1>
+          <p className="text-lg mb-6">
+            Measure and understand your social well-being through our comprehensive survey.
           </p>
-          <Link to='/sign-up'>
-            <button className='bg-white text-teal-500 font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-gray-100 dark:hover:bg-gray-800'>
-              Sign Up
-            </button>
-          </Link>
+          <button className="bg-white bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-gray-100" onClick={handleSurveyClick}>
+            Take the Survey
+          </button>
         </div>
       </section>
 
       {/* Main Content */}
-      <main className='py-12'>
-        <section className='container mx-auto px-6'>
-          <div className='flex flex-col md:flex-row gap-8'>
-            <div className='flex-1 max-w-lg mx-auto'>
-              <h2 className='text-2xl font-semibold mb-4'>Understanding Social Well-being</h2>
-              <div className='aspect-w-16 aspect-h-9'>
-                <iframe
-                  width='560'
-                  height='315'
-                  src='https://www.youtube.com/embed/Pyd3r0xTkI0'
-                  title='Understanding Social Well-being'
-                  frameBorder='0'
-                  allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-                  allowFullScreen
-                  className='rounded-lg shadow-lg'
-                ></iframe>
-              </div>
+      <main className="py-12">
+        <section className="container mx-auto px-6">
+          <div className="mb-12">
+            <h2 className="text-2xl font-semibold mb-4">
+              About the South Wales Social Well-being Scale
+            </h2>
+            <p className="text-gray-700 text-lg">
+              The South Wales Social Well-being Scale (SWSWBS) is a validated tool designed to assess various aspects of your social environment and interactions over the past two weeks. It helps to measure how well you are integrated into your social world and how these interactions contribute to your overall well-being.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-xl font-semibold mb-2">
+                Key Areas of Assessment
+              </h3>
+              <ul className="list-disc list-inside text-gray-700">
+                <li>Home and external environment safety</li>
+                <li>Financial security and sufficiency</li>
+                <li>Engagement in meaningful activities</li>
+                <li>Social interactions with family and friends</li>
+                <li>Freedom from harassment and discrimination</li>
+                <li>Use of local services and facilities</li>
+                <li>Community involvement and group activities</li>
+                <li>Learning and personal growth</li>
+              </ul>
             </div>
-            
-            <div className='flex-1 max-w-lg mx-auto'>
-              <h2 className='text-2xl font-semibold mb-4'>Building Strong Social Connections</h2>
-              <div className='aspect-w-16 aspect-h-9'>
-                <iframe
-                  width='560'
-                  height='315'
-                  src='https://www.youtube.com/embed/bfCZBXQYSlw'
-                  title='Building Strong Social Connections'
-                  frameBorder='0'
-                  allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-                  allowFullScreen
-                  className='rounded-lg shadow-lg'
-                ></iframe>
-              </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-xl font-semibold mb-2">
+                How It Works
+              </h3>
+              <p className="text-gray-700 mb-4">
+                The survey consists of 14 items, each exploring a different aspect of your social well-being. You'll rate your experiences over the past two weeks using a 5-point scale ranging from "none of the time" to "all of the time."
+              </p>
+              <p className="text-gray-700">
+                Your responses will help you understand how well you are socially integrated, and highlight areas where you may want to focus on improving your social well-being.
+              </p>
             </div>
           </div>
         </section>
-        
-        <section className='bg-gray-100 dark:bg-gray-700 p-6 rounded-lg shadow-md mt-12'>
-          <div className='container mx-auto px-6'>
-            <h2 className='text-2xl font-semibold mb-4'>Why Social Well-being Matters</h2>
-            <p className='mb-4'>
-              Social well-being is crucial for a fulfilling and balanced life. It encompasses your ability to connect with others, engage 
-              in meaningful relationships, and contribute positively to your community.
+
+        <section className="bg-gray-100 p-6 rounded-lg shadow-md mt-12">
+          <div className="container mx-auto px-6">
+            <h2 className="text-2xl font-semibold mb-4">Why Social Well-being Matters</h2>
+            <p className="mb-4 text-gray-700">
+              Social well-being is crucial for a fulfilling and balanced life. It encompasses your ability to connect with others, engage in meaningful relationships, and contribute positively to your community.
             </p>
-            <ul className='list-disc list-inside pl-5'>
+            <ul className="list-disc list-inside pl-5 text-gray-700">
               <li>Enhances mental and emotional health</li>
               <li>Strengthens community bonds</li>
               <li>Promotes personal growth and development</li>
@@ -75,4 +82,5 @@ export default function HomePage() {
       </main>
     </div>
   );
-}
+};
+

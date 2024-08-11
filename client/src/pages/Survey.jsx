@@ -72,39 +72,43 @@ const SurveyForm = () => {
     // Check if all survey questions are answered
     const unanswered = surveyAnswers.map((answer, index) => answer === null ? index : null).filter(i => i !== null);
     if (unanswered.length > 0) {
-      setUnansweredQuestions(unanswered);
-      setLoading(false);
-      setError('Please answer all survey questions before submitting.');
-      return;
+        setUnansweredQuestions(unanswered);
+        setLoading(false);
+        setError('Please answer all survey questions before submitting.');
+        return;
     }
 
+    // Calculate total score
+    const totalScore = surveyAnswers.reduce((acc, answer) => acc + (answer || 0), 0);
+
     const surveyData = {
-      ...formData,
-      surveyAnswers,
-      user: currentUser._id,
+        ...formData,
+        surveyAnswers,
+        totalScore,  // Include total score in survey data
+        user: currentUser._id,
     };
 
     try {
-      const res = await fetch('http://localhost:3000/api/survey/surveyQuestion', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(surveyData),
-      });
+        const res = await fetch('http://localhost:3000/api/survey/surveyQuestion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(surveyData),
+        });
 
-      const data = await res.json();
-      setLoading(false);
+        const data = await res.json();
+        setLoading(false);
 
-      if (!res.ok) {
-        setError(data.message || 'Failed to submit survey. Please try again.');
-        return;
-      }
+        if (!res.ok) {
+            setError(data.message || 'Failed to submit survey. Please try again.');
+            return;
+        }
 
-      setSubmitted(true);
+        setSubmitted(true);
     } catch (error) {
-      setLoading(false);
-      setError('Failed to submit survey. Please try again.');
+        setLoading(false);
+        setError('Failed to submit survey. Please try again.');
     }
-  };
+};
 
   // Handle viewing results after submission
   const handleViewResults = () => {

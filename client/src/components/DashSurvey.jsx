@@ -4,15 +4,20 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-export default function DashSurvey() {
-  const { currentUser } = useSelector(state => state.user);
+export default function DashSurveys() {
+  const { currentUser } = useSelector((state) => state.user);
   const [userSurveys, setUserSurveys] = useState([]);
-  const [showMore, setShowMore] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedSurveyId, setSelectedSurveyId] = useState(null);
   const navigate = useNavigate();
 
-  // Function to fetch surveys
+  // Function to format date from mm/dd/yyyy to dd/mm/yyyy
+  const formatDate = (dateString) => {
+    const [month, day, year] = dateString.split('/');
+    return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
+  };
+
+  // Fetch surveys from the server
   const fetchSurveys = async () => {
     if (!currentUser) {
       console.error("Current user is not available.");
@@ -28,10 +33,9 @@ export default function DashSurvey() {
       const data = await res.json();
 
       if (res.ok) {
-        setUserSurveys(data.surveys);
-        if (data.surveys.length < 10) {
-          setShowMore(false);
-        }
+        // Sort surveys by updatedAt in descending order
+        const sortedSurveys = data.surveys.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+        setUserSurveys(sortedSurveys);
       } else {
         console.error("Failed to fetch surveys:", data.message || res.statusText);
       }
@@ -40,23 +44,18 @@ export default function DashSurvey() {
     }
   };
 
-  // Fetch surveys on component mount or when currentUser changes
-  useEffect(() => {
-    fetchSurveys();
-  }, [currentUser]);
-
-  // Function to handle view click
+  // Handle view button click
   const handleViewClick = (survey) => {
     navigate('/survey-details', { state: { survey } });
   };
 
-  // Function to handle delete button click
+  // Handle delete button click
   const handleDeleteClick = (surveyId) => {
     setSelectedSurveyId(surveyId);
     setShowModal(true);
   };
 
-  // Function to handle survey deletion
+  // Handle survey deletion
   const handleDelete = async () => {
     if (!currentUser) {
       console.error("Current user is not available for deletion.");
@@ -75,8 +74,8 @@ export default function DashSurvey() {
       if (!res.ok) {
         console.error("Failed to delete survey:", data.message || res.statusText);
       } else {
-        setUserSurveys(prevSurveys =>
-          prevSurveys.filter(survey => survey._id !== selectedSurveyId)
+        setUserSurveys((prevSurveys) =>
+          prevSurveys.filter((survey) => survey._id !== selectedSurveyId)
         );
       }
     } catch (error) {
@@ -86,6 +85,10 @@ export default function DashSurvey() {
     }
   };
 
+  useEffect(() => {
+    fetchSurveys();
+  }, [currentUser]);
+
   if (!currentUser) {
     return <p>Loading user information...</p>;
   }
@@ -93,46 +96,58 @@ export default function DashSurvey() {
   return (
     <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
       {userSurveys.length > 0 ? (
-        <Table hoverable className='shadow-md'>
-          <Table.Head>
-            <Table.HeadCell>Date Updated</Table.HeadCell>
-            <Table.HeadCell>Survey Username</Table.HeadCell>
-            <Table.HeadCell>Gender</Table.HeadCell>
-            <Table.HeadCell>Age Group</Table.HeadCell>
-            <Table.HeadCell>Profession</Table.HeadCell>
-            <Table.HeadCell>Education</Table.HeadCell>
-            <Table.HeadCell>Place</Table.HeadCell>
-            <Table.HeadCell>View</Table.HeadCell>
-            {currentUser?.isAdmin && <Table.HeadCell>Delete</Table.HeadCell>}
-          </Table.Head>
-          <Table.Body className='divide-y'>
-            {userSurveys.map((survey) => (
-              <Table.Row key={survey._id} className='bg-white dark:border-gray-700 dark:bg-gray-800'>
-                <Table.Cell>{new Date(survey.updatedAt).toLocaleDateString()}</Table.Cell>
-                <Table.Cell>{survey.surveyUsername || 'N/A'}</Table.Cell>
-                <Table.Cell>{survey.gender || 'N/A'}</Table.Cell>
-                <Table.Cell>{survey.ageGroup || 'N/A'}</Table.Cell>
-                <Table.Cell>{survey.profession || 'N/A'}</Table.Cell>
-                <Table.Cell>{survey.education || 'N/A'}</Table.Cell>
-                <Table.Cell>{[
-                  survey.country || 'N/A',
-                  survey.state || 'N/A',
-                  survey.city || 'N/A'
-                ].join(', ')}</Table.Cell>
-                <Table.Cell>
-                  <Button onClick={() => handleViewClick(survey)}>View</Button>
-                </Table.Cell>
-                {currentUser?.isAdmin && (
+        <>
+          <Table hoverable className='shadow-md'>
+            <Table.Head>
+              <Table.HeadCell>Date Updated</Table.HeadCell>
+              <Table.HeadCell>Survey Username</Table.HeadCell>
+              <Table.HeadCell>Gender</Table.HeadCell>
+              <Table.HeadCell>Age Group</Table.HeadCell>
+              <Table.HeadCell>Profession</Table.HeadCell>
+              <Table.HeadCell>Education</Table.HeadCell>
+              <Table.HeadCell>Place</Table.HeadCell>
+              <Table.HeadCell>View</Table.HeadCell>
+              {currentUser?.isAdmin && <Table.HeadCell>Delete</Table.HeadCell>}
+            </Table.Head>
+            <Table.Body className='divide-y'>
+              {userSurveys.map((survey) => (
+                <Table.Row
+                  key={survey._id}
+                  className='bg-white dark:border-gray-700 dark:bg-gray-800'
+                >
+                  <Table.Cell>{formatDate(new Date(survey.updatedAt).toLocaleDateString())}</Table.Cell>
+                  <Table.Cell>{survey.surveyUsername || 'N/A'}</Table.Cell>
+                  <Table.Cell>{survey.gender || 'N/A'}</Table.Cell>
+                  <Table.Cell>{survey.ageGroup || 'N/A'}</Table.Cell>
+                  <Table.Cell>{survey.profession || 'N/A'}</Table.Cell>
+                  <Table.Cell>{survey.education || 'N/A'}</Table.Cell>
                   <Table.Cell>
-                    <Button onClick={() => handleDeleteClick(survey._id)} color="failure">Delete</Button>
+                    {[
+                      survey.country || 'N/A',
+                      survey.state || 'N/A',
+                      survey.city || 'N/A',
+                    ].join(', ')}
                   </Table.Cell>
-                )}
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table>
+                  <Table.Cell>
+                    <Button onClick={() => handleViewClick(survey)}>View</Button>
+                  </Table.Cell>
+                  {currentUser?.isAdmin && (
+                    <Table.Cell>
+                      <Button
+                        onClick={() => handleDeleteClick(survey._id)}
+                        color='failure'
+                      >
+                        Delete
+                      </Button>
+                    </Table.Cell>
+                  )}
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+        </>
       ) : (
-        <p>You don't have any surveys yet. Please create a new survey.</p>
+        <p>You don't have any surveys yet.</p>
       )}
       <Modal
         show={showModal}
