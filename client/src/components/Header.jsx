@@ -24,7 +24,7 @@ export default function Header() {
         console.log(data.message);
       } else {
         dispatch(signoutSuccess());
-        navigate('/signin');
+        navigate('/');
       }
     } catch (error) {
       console.log(error.message);

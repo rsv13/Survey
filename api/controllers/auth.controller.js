@@ -142,3 +142,17 @@ export const google = async (req, res, next) => {
     next(error);
   }
 };
+
+export const checkAuth = (req, res, next) => {
+  const token = req.cookies?.access_token;
+  if (!token) {
+    return res.status(401).json({ signedIn: false });
+  }
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(401).json({ signedIn: false });
+    }
+    req.user = user;
+    res.json({ signedIn: true });
+  });
+};
