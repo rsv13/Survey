@@ -1,5 +1,6 @@
-import { Button, Modal, Table } from 'flowbite-react';
+import { Button, Modal, Table, TextInput } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
+import { AiOutlineSearch } from 'react-icons/ai'; // Import the search icon
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
@@ -15,6 +16,8 @@ export default function DashUsers() {
   const [selectedUserSurveys, setSelectedUserSurveys] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showSurveyModal, setShowSurveyModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [filteredUsers, setFilteredUsers] = useState([]); // State for filtered users
 
   const formatDate = (dateString) => {
     const [month, day, year] = dateString.split('/');
@@ -40,6 +43,19 @@ export default function DashUsers() {
       fetchUsers();
     }
   }, [currentUser._id]);
+
+  useEffect(() => {
+    if (searchQuery) {
+      setFilteredUsers(
+        users.filter(user =>
+          user.surveyUsername.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredUsers(users);
+    }
+  }, [searchQuery, users]);
 
   const handleShowMore = async () => {
     const startIndex = users.length;
@@ -94,7 +110,17 @@ export default function DashUsers() {
   };
 
   return (
-    <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
+    <div className='p-3'>
+      <div className='flex items-center mb-4'>
+        <TextInput
+          type='text'
+          placeholder='Search users...'
+          rightIcon={AiOutlineSearch}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className='w-full max-w-md'
+        />
+      </div>
       {currentUser.isAdmin && users.length > 0 ? (
         <>
           <Table hoverable className='shadow-md'>
@@ -107,7 +133,7 @@ export default function DashUsers() {
               <Table.HeadCell>View Surveys</Table.HeadCell>
               <Table.HeadCell>Delete</Table.HeadCell>
             </Table.Head>
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <Table.Body className='divide-y' key={user._id}>
                 <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800'>
                   <Table.Cell>

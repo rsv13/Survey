@@ -1,5 +1,6 @@
-import { Button, Modal, Table } from 'flowbite-react';
+import { Button, Modal, Table, TextInput } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
+import { AiOutlineSearch } from 'react-icons/ai'; // Import the search icon
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -7,8 +8,10 @@ import { useNavigate } from 'react-router-dom';
 export default function DashSurveys() {
   const { currentUser } = useSelector((state) => state.user);
   const [userSurveys, setUserSurveys] = useState([]);
+  const [filteredSurveys, setFilteredSurveys] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedSurveyId, setSelectedSurveyId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const navigate = useNavigate();
 
   // Function to format date from mm/dd/yyyy to dd/mm/yyyy
@@ -36,6 +39,7 @@ export default function DashSurveys() {
         // Sort surveys by updatedAt in descending order
         const sortedSurveys = data.surveys.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
         setUserSurveys(sortedSurveys);
+        setFilteredSurveys(sortedSurveys); // Initialize filteredSurveys
       } else {
         console.error("Failed to fetch surveys:", data.message || res.statusText);
       }
@@ -43,6 +47,21 @@ export default function DashSurveys() {
       console.error("Error fetching surveys:", error.message);
     }
   };
+
+  // Filter surveys based on search query
+  useEffect(() => {
+    const query = searchQuery.toLowerCase();
+    const filtered = userSurveys.filter(survey =>
+      (survey.surveyUsername || '').toLowerCase().includes(query) ||
+      (survey.gender || '').toLowerCase().includes(query) ||
+      (survey.profession || '').toLowerCase().includes(query) ||
+      (survey.education || '').toLowerCase().includes(query) ||
+      (survey.country || '').toLowerCase().includes(query) ||
+      (survey.state || '').toLowerCase().includes(query) ||
+      (survey.city || '').toLowerCase().includes(query)
+    );
+    setFilteredSurveys(filtered);
+  }, [searchQuery, userSurveys]);
 
   // Handle view button click
   const handleViewClick = (survey) => {
@@ -77,6 +96,9 @@ export default function DashSurveys() {
         setUserSurveys((prevSurveys) =>
           prevSurveys.filter((survey) => survey._id !== selectedSurveyId)
         );
+        setFilteredSurveys((prevFilteredSurveys) =>
+          prevFilteredSurveys.filter((survey) => survey._id !== selectedSurveyId)
+        );
       }
     } catch (error) {
       console.error("Error deleting survey:", error.message);
@@ -94,8 +116,18 @@ export default function DashSurveys() {
   }
 
   return (
-    <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500'>
-      {userSurveys.length > 0 ? (
+    <div className='p-3'>
+      <div className='flex items-center mb-4'>
+        <TextInput
+          type='text'
+          placeholder='Search surveys...'
+          rightIcon={AiOutlineSearch}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className='w-full max-w-md'
+        />
+      </div>
+      {filteredSurveys.length > 0 ? (
         <>
           <Table hoverable className='shadow-md'>
             <Table.Head>
@@ -110,7 +142,7 @@ export default function DashSurveys() {
               {currentUser?.isAdmin && <Table.HeadCell>Delete</Table.HeadCell>}
             </Table.Head>
             <Table.Body className='divide-y'>
-              {userSurveys.map((survey) => (
+              {filteredSurveys.map((survey) => (
                 <Table.Row
                   key={survey._id}
                   className='bg-white dark:border-gray-700 dark:bg-gray-800'

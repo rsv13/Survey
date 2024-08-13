@@ -9,6 +9,7 @@ export default function HomePage() {
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
 
+<<<<<<< HEAD
   useEffect(() => {
     const checkSignInStatus = async () => {
       try {
@@ -59,6 +60,10 @@ export default function HomePage() {
     } else {
       navigate('/sign-up'); // Redirect to the sign-up page if not signed in
     }
+=======
+  const handleSurveyClick = () => {
+    navigate('/sign-up');
+>>>>>>> afc1a9e (Add search to the DashUser and DashSurvey. Also simplify HomePage)
   };
 
   return (
