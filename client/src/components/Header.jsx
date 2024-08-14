@@ -1,6 +1,5 @@
-import { Avatar, Button, Dropdown, Navbar, NavbarToggle, TextInput } from 'flowbite-react';
+import { Avatar, Button, Dropdown, Navbar, NavbarToggle } from 'flowbite-react';
 import React from 'react';
-import { AiOutlineSearch } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -36,17 +35,6 @@ export default function Header() {
       <Link to='/'>
         <span className='px-2 py-1 bg-red-700 rounded-lg text-white'>SWSWBS</span> Survey
       </Link>
-      <form>
-        <TextInput
-          type='text'
-          placeholder='Search...'
-          rightIcon={AiOutlineSearch}
-          className='hidden lg:inline'
-        />
-      </form>
-      <Button className='w-12 h-10 lg:hidden' color='gray' pill>
-        <AiOutlineSearch />
-      </Button>
       <div className='flex gap-2 md:order-2'>
         <Button className='w-12 h-10 hidden sm:inline' color='gray' pill onClick={() => dispatch(toggleTheme())}>
           {theme === 'light' ? <FaMoon /> : <FaSun />}
