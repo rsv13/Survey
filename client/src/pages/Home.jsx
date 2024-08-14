@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -64,6 +65,16 @@ export default function HomePage() {
   const handleSurveyClick = () => {
     navigate('/sign-up');
 >>>>>>> afc1a9e (Add search to the DashUser and DashSurvey. Also simplify HomePage)
+=======
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+export default function HomePage(){
+
+  const navigate = useNavigate();
+
+  const handleSurveyClick = () => {
+    navigate('/survey');
+>>>>>>> 6d41adc (fixed the survey form and the Home Page)
   };
 
   return (

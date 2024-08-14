@@ -8,7 +8,11 @@ const SurveyForm = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+<<<<<<< HEAD
     surveyUsername: currentUser.surveyUsername,
+=======
+    surveyUsername: currentUser.surveyUsername || '', // Ensure it is a string
+>>>>>>> 6d41adc (fixed the survey form and the Home Page)
     gender: '',
     ageGroup: '',
     profession: '',
@@ -26,10 +30,30 @@ const SurveyForm = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+<<<<<<< HEAD
     setFormData(prevData => ({
       surveyUsername: currentUser.surveyUsername,
       ...prevData,
     }));
+=======
+    setFormData({
+      surveyUsername: currentUser.surveyUsername || '', // Ensure default is string
+      gender: '',
+      ageGroup: '',
+      profession: '',
+      education: '',
+      country: '',
+      state: '',
+      city: '',
+      consent: false,
+    });
+    setSurveyAnswers(Array(14).fill(null));
+    setUnansweredQuestions(Array.from(Array(14).keys()));
+    setShowSurvey(false);
+    setSubmitted(false);
+    setError(null);
+    setLoading(false);
+>>>>>>> 6d41adc (fixed the survey form and the Home Page)
   }, [currentUser.surveyUsername]);
 
   const handleFormChange = (e) => {
@@ -58,6 +82,10 @@ const SurveyForm = () => {
     }
     if (!formData.consent) {
       setError('You must consent to use data for research and educational purposes.');
+      return;
+    }
+    if (!formData.gender || !formData.ageGroup || !formData.profession || !formData.education || !formData.country || !formData.state || !formData.city) {
+      setError('Please fill out all fields.');
       return;
     }
     setLoading(true);
@@ -111,7 +139,7 @@ const SurveyForm = () => {
         setLoading(false);
         setError('Failed to submit survey. Please try again.');
     }
-};
+  };
 
   const handleViewResults = () => {
     const score = surveyAnswers.reduce((acc, answer) => acc + (answer || 0), 0);
@@ -121,6 +149,14 @@ const SurveyForm = () => {
   return (
     <div className='min-h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-800'>
       <div className='max-w-4xl w-full p-8 bg-white dark:bg-gray-700 shadow-lg rounded-lg'>
+<<<<<<< HEAD
+=======
+        {(!showSurvey && error) && (
+          <Alert color='failure' className='mb-4'>
+            {error}
+          </Alert>
+        )}
+>>>>>>> 6d41adc (fixed the survey form and the Home Page)
         {!showSurvey ? (
           <form className='space-y-6' onSubmit={handleSubmit}>
             <h1 className='text-3xl font-semibold text-center text-gray-800 dark:text-gray-200 mb-6'>
@@ -199,8 +235,13 @@ const SurveyForm = () => {
                 I consent to use this data for research and educational purposes.
               </Label>
             </div>
+<<<<<<< HEAD
             {error && (
               <Alert color='failure' className='mb-4'>
+=======
+            {error && !showSurvey && (
+              <Alert color='failure' className='my-4'>
+>>>>>>> 6d41adc (fixed the survey form and the Home Page)
                 {error}
               </Alert>
             )}
@@ -257,7 +298,7 @@ const SurveyForm = () => {
               </div>
             ))}
             {error && showSurvey && (
-              <Alert color='failure' className='mb-4'>
+              <Alert color='failure' className='my-4'>
                 {error}
               </Alert>
             )}
