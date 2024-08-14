@@ -8,11 +8,7 @@ const SurveyForm = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-<<<<<<< HEAD
-    surveyUsername: currentUser.surveyUsername,
-=======
     surveyUsername: currentUser.surveyUsername || '', // Ensure it is a string
->>>>>>> 6d41adc (fixed the survey form and the Home Page)
     gender: '',
     ageGroup: '',
     profession: '',
@@ -30,12 +26,6 @@ const SurveyForm = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-<<<<<<< HEAD
-    setFormData(prevData => ({
-      surveyUsername: currentUser.surveyUsername,
-      ...prevData,
-    }));
-=======
     setFormData({
       surveyUsername: currentUser.surveyUsername || '', // Ensure default is string
       gender: '',
@@ -53,9 +43,9 @@ const SurveyForm = () => {
     setSubmitted(false);
     setError(null);
     setLoading(false);
->>>>>>> 6d41adc (fixed the survey form and the Home Page)
   }, [currentUser.surveyUsername]);
 
+  // Handle changes to the form fields
   const handleFormChange = (e) => {
     const { id, value, type, checked } = e.target;
     setFormData({
@@ -64,6 +54,7 @@ const SurveyForm = () => {
     });
   };
 
+  // Handle changes to the survey answers
   const handleSurveyChange = (index, value) => {
     const newAnswers = [...surveyAnswers];
     newAnswers[index] = value;
@@ -71,15 +62,9 @@ const SurveyForm = () => {
     setUnansweredQuestions(unansweredQuestions.filter(i => i !== index));
   };
 
+  // Handle form submission to start the survey
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    const requiredFields = ['gender', 'ageGroup', 'profession', 'education', 'country', 'state', 'city'];
-    const missingFields = requiredFields.filter(field => !formData[field]);
-    if (missingFields.length > 0) {
-      setError(`Please fill out all required fields: ${missingFields.join(', ')}`);
-      return;
-    }
     if (!formData.consent) {
       setError('You must consent to use data for research and educational purposes.');
       return;
@@ -91,17 +76,20 @@ const SurveyForm = () => {
     setLoading(true);
     setError(null);
 
+    // Simulate an API call or async operation
     setTimeout(() => {
       setLoading(false);
       setShowSurvey(true);
     }, 1000);
   };
 
+  // Handle survey submission
   const handleSurveySubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
+    // Check if all survey questions are answered
     const unanswered = surveyAnswers.map((answer, index) => answer === null ? index : null).filter(i => i !== null);
     if (unanswered.length > 0) {
         setUnansweredQuestions(unanswered);
@@ -110,12 +98,13 @@ const SurveyForm = () => {
         return;
     }
 
+    // Calculate total score
     const totalScore = surveyAnswers.reduce((acc, answer) => acc + (answer || 0), 0);
 
     const surveyData = {
         ...formData,
         surveyAnswers,
-        totalScore,
+        totalScore,  // Include total score in survey data
         user: currentUser._id,
     };
 
@@ -141,6 +130,7 @@ const SurveyForm = () => {
     }
   };
 
+  // Handle viewing results after submission
   const handleViewResults = () => {
     const score = surveyAnswers.reduce((acc, answer) => acc + (answer || 0), 0);
     navigate('/results', { state: { score, answers: surveyAnswers } });
@@ -149,14 +139,11 @@ const SurveyForm = () => {
   return (
     <div className='min-h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-800'>
       <div className='max-w-4xl w-full p-8 bg-white dark:bg-gray-700 shadow-lg rounded-lg'>
-<<<<<<< HEAD
-=======
         {(!showSurvey && error) && (
           <Alert color='failure' className='mb-4'>
             {error}
           </Alert>
         )}
->>>>>>> 6d41adc (fixed the survey form and the Home Page)
         {!showSurvey ? (
           <form className='space-y-6' onSubmit={handleSubmit}>
             <h1 className='text-3xl font-semibold text-center text-gray-800 dark:text-gray-200 mb-6'>
@@ -235,13 +222,8 @@ const SurveyForm = () => {
                 I consent to use this data for research and educational purposes.
               </Label>
             </div>
-<<<<<<< HEAD
-            {error && (
-              <Alert color='failure' className='mb-4'>
-=======
             {error && !showSurvey && (
               <Alert color='failure' className='my-4'>
->>>>>>> 6d41adc (fixed the survey form and the Home Page)
                 {error}
               </Alert>
             )}
