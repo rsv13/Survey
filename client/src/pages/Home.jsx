@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-export default function HomePage(){
+import BannerImage from '../assets/icons/BannerImage.jpg';
 
+export default function HomePage() {
   const navigate = useNavigate();
 
   const handleSurveyClick = () => {
@@ -11,15 +12,25 @@ export default function HomePage(){
   return (
     <div className="bg-gray-50 text-gray-900">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white py-20">
-        <div className="container mx-auto px-6 text-center">
+      <section
+        className="relative bg-cover bg-center text-white py-20"
+        style={{ backgroundImage: `url(${BannerImage})` }}
+      >
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black opacity-50"></div>
+
+        {/* Content */}
+        <div className="relative container mx-auto px-6 text-center">
           <h1 className="text-4xl font-bold mb-4">
             Welcome to the South Wales Social Well-being Scale
           </h1>
           <p className="text-lg mb-6">
             Measure and understand your social well-being through our comprehensive survey.
           </p>
-          <button className="bg-white bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-gray-100" onClick={handleSurveyClick}>
+          <button
+            className="bg-white bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-gray-100"
+            onClick={handleSurveyClick}
+          >
             Take the Survey
           </button>
         </div>
@@ -84,5 +95,4 @@ export default function HomePage(){
       </main>
     </div>
   );
-};
-
+}
