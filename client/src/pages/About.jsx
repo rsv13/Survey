@@ -6,7 +6,7 @@ export default function AboutUsPage() {
   const { theme } = useSelector((state) => state.theme);
 
   return (
-    <div className={`transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
+    <div className='bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100'>
       {/* Hero Section */}
       <section
         className="relative bg-cover bg-center text-white py-20"
