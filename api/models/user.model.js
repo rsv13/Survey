@@ -21,9 +21,10 @@ const userSchema = new mongoose.Schema(
       default:
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
     },
-    isAdmin: {
-      type: Boolean,
-      default: false,
+    role: {
+      type: String,
+      enum: ["normalUser", "groupAdmin", "admin"], // Enum to restrict values
+      default: "normalUser", // Default role if not specified
     },
     surveysSubmitted: {
       type: Number,
@@ -33,6 +34,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+    },
+    groupName: {
+      type: String,
+    },
+    groupDescription: {
+      type: String,
     },
   },
   { timestamps: true }

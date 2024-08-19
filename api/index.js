@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
 import authRoutes from "./routes/auth.route.js";
+import groupRoutes from "./routes/group.route.js"; // Import group routes
 import surveyRoutes from "./routes/survey.route.js";
 import userRoutes from "./routes/user.route.js";
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 
+// MongoDB connection
 mongoose
   .connect(process.env.MONGO)
   .then(() => {
@@ -23,14 +25,13 @@ mongoose
     console.log(err);
   });
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-});
-
+// Define routes
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/survey", surveyRoutes);
+app.use("/api/groups", groupRoutes); // Add group routes
 
+// Global error handler
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message;
@@ -39,4 +40,9 @@ app.use((err, req, res, next) => {
     statusCode,
     message,
   });
+});
+
+// Start server
+app.listen(3000, () => {
+  console.log("Server is running on port 3000");
 });
