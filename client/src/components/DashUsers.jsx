@@ -1,6 +1,5 @@
 import { Button, Modal, Table } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
-import { FaCheck, FaTimes } from 'react-icons/fa';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
 
@@ -10,6 +9,7 @@ export default function DashUsers() {
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState('');
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -73,12 +73,12 @@ export default function DashUsers() {
               <Table.HeadCell>User image</Table.HeadCell>
               <Table.HeadCell>Username</Table.HeadCell>
               <Table.HeadCell>Email</Table.HeadCell>
-              <Table.HeadCell>Admin</Table.HeadCell>
+              <Table.HeadCell>User Role</Table.HeadCell>
               <Table.HeadCell>Delete</Table.HeadCell>
             </Table.Head>
-            {users.map((user) => (
-              <Table.Body className='divide-y' key={user._id}>
-                <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800'>
+            <Table.Body className='divide-y'>
+              {users.map((user) => (
+                <Table.Row key={user._id} className='bg-white dark:border-gray-700 dark:bg-gray-800'>
                   <Table.Cell>
                     {new Date(user.createdAt).toLocaleDateString()}
                   </Table.Cell>
@@ -91,12 +91,15 @@ export default function DashUsers() {
                   </Table.Cell>
                   <Table.Cell>{user.username}</Table.Cell>
                   <Table.Cell>{user.email}</Table.Cell>
-                  <Table.Cell>
-                    {user.isAdmin ? (
-                      <FaCheck className='text-green-500' />
-                    ) : (
-                      <FaTimes className='text-red-500' />
-                    )}
+                  <Table.Cell
+                    className={
+                      user.role === 'Admin' ? 'text-red-500' :
+                      user.role === 'Group Admin' ? 'text-teal-500' :
+                      user.role === 'normalUser' ?  'text-blue-500' :
+                      'text-gray-500'
+                    }
+                  >
+                    {user.role === 'normalUser' ? 'User' : user.role}
                   </Table.Cell>
                   <Table.Cell>
                     <span
@@ -110,8 +113,8 @@ export default function DashUsers() {
                     </span>
                   </Table.Cell>
                 </Table.Row>
-              </Table.Body>
-            ))}
+              ))}
+            </Table.Body>
           </Table>
           {showMore && (
             <button
