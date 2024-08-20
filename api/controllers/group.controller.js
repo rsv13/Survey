@@ -229,3 +229,37 @@ export const deleteGroup = async (req, res, next) => {
     next(error);
   }
 };
+
+// Controller function to get all groups (for Admin)
+export const getAdminGroups = async (req, res, next) => {
+  try {
+    // Check if the user is an Admin
+    if (req.user.role !== "Admin") {
+      return res.status(403).json({ error: "Forbidden Access" });
+    }
+
+    // Admins can view all groups
+    const groups = await Group.find({}).populate("members createdBy admins");
+    res.status(200).json(groups);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Controller function to get groups created by the Group Admin
+export const getAdminGroupCluster = async (req, res, next) => {
+  try {
+    // Check if the user is a Group Admin
+    if (req.user.role !== "Group Admin") {
+      return res.status(403).json({ error: "Forbidden Access" });
+    }
+
+    // Group Admins can view only the groups they created
+    const groups = await Group.find({ createdBy: req.user.id }).populate(
+      "members createdBy admins"
+    );
+    res.status(200).json(groups);
+  } catch (error) {
+    next(error);
+  }
+};

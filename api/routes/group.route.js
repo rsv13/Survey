@@ -3,6 +3,8 @@ import {
   addUserToGroup,
   createGroup,
   deleteGroup,
+  getAdminGroupCluster,
+  getAdminGroups,
   getAllGroups,
   getGroupDetails,
   removeUserFromGroup,
@@ -28,5 +30,16 @@ router.post("/remove-user", verifyToken, isGroupAdmin, removeUserFromGroup);
 
 // Route to delete a group (only Admins can delete groups)
 router.delete("/:groupId", verifyToken, isAdmin, deleteGroup);
+
+// Route for Admin to get all groups
+router.get("/admin/groups", verifyToken, isAdmin, getAdminGroups);
+
+// Route for Group Admin to get their created groups
+router.get(
+  "/group-admin/groups",
+  verifyToken,
+  isGroupAdmin,
+  getAdminGroupCluster
+);
 
 export default router;
