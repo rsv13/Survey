@@ -23,8 +23,13 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
+<<<<<<< HEAD
       enum: ["normalUser", "groupAdmin", "admin"], // Enum to restrict values
       default: "normalUser", // Default role if not specified
+=======
+      enum: ["normalUser", "Group Admin", "Admin"],
+      default: "normalUser",
+>>>>>>> c99a19b (Creation of Group API, user role and modifying the signup page accordingly)
     },
     surveysSubmitted: {
       type: Number,
@@ -35,11 +40,17 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+<<<<<<< HEAD
     groupName: {
       type: String,
     },
     groupDescription: {
       type: String,
+=======
+    group: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Group", // Reference to the Group model
+>>>>>>> c99a19b (Creation of Group API, user role and modifying the signup page accordingly)
     },
   },
   { timestamps: true }

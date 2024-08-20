@@ -1,4 +1,4 @@
-import bcryptjs from "bcryptjs";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Counter from "../models/counter.model.js";
 import Group from "../models/group.model.js";
@@ -16,6 +16,7 @@ const getNextSurveyUsername = async () => {
   return `SWSWBS${number}`;
 };
 
+<<<<<<< HEAD
 // Signup function
 export const signup = async (req, res, next) => {
   const { username, email, password, role, groupName, groupDescription } =
@@ -25,6 +26,19 @@ export const signup = async (req, res, next) => {
   if (!username || !email || !password || !role) {
     return next(errorHandler(400, "All fields are required"));
   }
+=======
+// Sign up function
+export const signup = async (req, res) => {
+  const {
+    username,
+    email,
+    password,
+    role,
+    name, // Group name
+    description, // Group description
+    group,
+  } = req.body;
+>>>>>>> c99a19b (Creation of Group API, user role and modifying the signup page accordingly)
 
   if (role === "groupAdmin") {
     if (!groupName || !groupDescription) {
@@ -38,6 +52,7 @@ export const signup = async (req, res, next) => {
   }
 
   try {
+<<<<<<< HEAD
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -49,17 +64,67 @@ export const signup = async (req, res, next) => {
     const surveyUsername = await getNextSurveyUsername();
 
     // Create the new user
+=======
+    // Validate required fields based on role
+    if (!username || !email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Username, email, and password are required" });
+    }
+
+    const surveyUsername = await getNextSurveyUsername();
+
+    if (role === "Group Admin" && (!name || !description)) {
+      return res.status(400).json({
+        message: "Group name and description are required for Group Admin",
+      });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    // Create a new user
+    const hashedPassword = await bcrypt.hash(password, 10);
+>>>>>>> c99a19b (Creation of Group API, user role and modifying the signup page accordingly)
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
+<<<<<<< HEAD
       surveyUsername,
       role,
       ...(role === "groupAdmin" && { groupName, groupDescription }),
+=======
+      role,
+      surveyUsername, // Assign surveyUsername
+>>>>>>> c99a19b (Creation of Group API, user role and modifying the signup page accordingly)
     });
+
+    let newGroup = null;
+
+    if (role === "Group Admin") {
+      // Create the new group
+      newGroup = new Group({
+        name, // Group name
+        description, // Group description
+        createdBy: newUser._id,
+        admins: [newUser._id], // Add the creator as an admin
+      });
+
+      await newGroup.save();
+
+      // Update the newUser with the group information
+      newUser.group = newGroup._id;
+    } else {
+      newUser.group = group || null; // Assign the group ID if provided
+    }
 
     await newUser.save();
 
+<<<<<<< HEAD
     // If the user is a groupAdmin, create the group
     if (role === "groupAdmin") {
       const newGroup = new Group({
@@ -72,12 +137,23 @@ export const signup = async (req, res, next) => {
     }
 
     // Generate a JWT token
+=======
+    // If role is 'Group Admin', update the group with admin information
+    if (role === "Group Admin") {
+      await Group.findByIdAndUpdate(newGroup._id, {
+        $addToSet: { admins: newUser._id },
+      });
+    }
+
+    // Generate token
+>>>>>>> c99a19b (Creation of Group API, user role and modifying the signup page accordingly)
     const token = jwt.sign(
       { id: newUser._id, role: newUser.role },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
+<<<<<<< HEAD
     res.status(201).cookie("access_token", token, { httpOnly: true }).json({
       success: true,
       message: "Signup Successful. Please sign in using your credentials.",
@@ -88,6 +164,19 @@ export const signup = async (req, res, next) => {
 };
 
 // Signin function
+=======
+    res.status(201).json({
+      message: "User created successfully",
+      token,
+    });
+  } catch (error) {
+    console.error("Error during signup:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Sign in function
+>>>>>>> c99a19b (Creation of Group API, user role and modifying the signup page accordingly)
 export const signin = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -101,7 +190,7 @@ export const signin = async (req, res, next) => {
       return next(errorHandler(404, "Invalid email or password"));
     }
 
-    const validPassword = bcryptjs.compareSync(password, validUser.password);
+    const validPassword = await bcrypt.compare(password, validUser.password);
     if (!validPassword) {
       return next(errorHandler(404, "Invalid email or password"));
     }
@@ -122,12 +211,16 @@ export const signin = async (req, res, next) => {
   }
 };
 
+<<<<<<< HEAD
 // Google Signin function
+=======
+// Google sign-in function
+>>>>>>> c99a19b (Creation of Group API, user role and modifying the signup page accordingly)
 export const google = async (req, res, next) => {
   const { email, name, googlePhotoUrl } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
     if (user) {
       const token = jwt.sign(
         { id: user._id, role: user.role },
@@ -135,6 +228,7 @@ export const google = async (req, res, next) => {
         { expiresIn: "1h" }
       );
       const { password, ...rest } = user._doc;
+<<<<<<< HEAD
       res
         .status(200)
         .cookie("access_token", token, { httpOnly: true })
@@ -163,10 +257,45 @@ export const google = async (req, res, next) => {
       );
       const { password, ...rest } = newUser._doc;
       res
+=======
+      return res
+>>>>>>> c99a19b (Creation of Group API, user role and modifying the signup page accordingly)
         .status(200)
         .cookie("access_token", token, { httpOnly: true })
         .json(rest);
     }
+
+    // If user does not exist, create a new user
+    const generatedPassword =
+      Math.random().toString(36).slice(-8) +
+      Math.random().toString(36).slice(-8);
+    const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+    const surveyUsername = await getNextSurveyUsername();
+
+    const newUser = new User({
+      username:
+        name.toLowerCase().replace(/\s+/g, "") +
+        Math.random().toString(9).slice(-4),
+      email,
+      password: hashedPassword,
+      profilePicture: googlePhotoUrl,
+      surveyUsername,
+      role: "normalUser", // Default to 'normalUser'
+      group: null, // No group assigned by default
+    });
+
+    await newUser.save();
+
+    const token = jwt.sign(
+      { id: newUser._id, role: newUser.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    const { password: pass, ...rest } = newUser._doc;
+    res
+      .status(200)
+      .cookie("access_token", token, { httpOnly: true })
+      .json(rest);
   } catch (error) {
     next(errorHandler(500, error.message));
   }

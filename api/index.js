@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.route.js";
 import groupRoutes from "./routes/group.route.js"; // Import group routes
 import surveyRoutes from "./routes/survey.route.js";
 import userRoutes from "./routes/user.route.js";
+import groupRoutes from "./routes/group.route.js"; // Import group routes
 
 dotenv.config();
 
@@ -29,7 +30,11 @@ mongoose
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/survey", surveyRoutes);
+<<<<<<< HEAD
 app.use("/api/groups", groupRoutes); // Add group routes
+=======
+app.use("/api/group", groupRoutes);
+>>>>>>> c99a19b (Creation of Group API, user role and modifying the signup page accordingly)
 
 // Global error handler
 app.use((err, req, res, next) => {

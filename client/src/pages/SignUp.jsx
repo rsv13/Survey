@@ -1,48 +1,103 @@
-import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
-import React, { useState } from 'react';
+import { Alert, Button, Label, Select, Spinner, TextInput, Textarea } from 'flowbite-react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import OAuth from '../components/OAuth';
 
 export default function SignUp() {
-
   const [formData, setFormData] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [groups, setGroups] = useState([]);
+  const [role, setRole] = useState('normalUser'); // Default to normalUser
+  const [groupName, setGroupName] = useState('');
+  const [groupDescription, setGroupDescription] = useState('');
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Fetch available groups on component mount
+    const fetchGroups = async () => {
+      try {
+        const response = await fetch('/api/group/allGroup');
+        const data = await response.json();
+        if (response.ok) {
+          setGroups(data.groups);
+        } else {
+          setErrorMessage(data.message);
+        }
+      } catch (error) {
+        setErrorMessage('Failed to fetch groups');
+      }
+    };
+
+    fetchGroups();
+  }, []);
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.id]: e.target.value.trim() })
-  }
+    setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
+  };
+
+  const handleRoleChange = (e) => {
+    setRole(e.target.value);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if(!formData.username  || !formData.email || !formData.password) {
-      return setErrorMessage('Please fill out all fields');
+
+    // Validate required fields based on role
+    if (role === 'normalUser') {
+      if (!formData.username || !formData.email || !formData.password) {
+        return setErrorMessage('Please fill out all fields');
+      }
+    } else if (role === 'Group Admin') {
+      if (!groupName || !groupDescription || !formData.username || !formData.email || !formData.password) {
+        return setErrorMessage('Please fill out all fields');
+      }
     }
+
     try {
       setLoading(true);
       setErrorMessage(null);
+
+      // Prepare payload for the API request
+      const payload = {
+        ...formData,
+        role,
+        name: role === 'Group Admin' ? groupName : undefined, // Only include if Group Admin
+        description: role === 'Group Admin' ? groupDescription : undefined, // Only include if Group Admin
+      };
+
       const res = await fetch('/api/auth/signup', {
-        method: "POST",
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
+
       const data = await res.json();
       setLoading(false);
-      if(res.ok) {
+
+      if (res.ok) {
         setErrorMessage(null);
         alert(data.message); // Show success message
+
+        // If the role is Group Admin, fetch and update the group list
+        if (role === 'Group Admin') {
+          const groupResponse = await fetch('/api/group/allGroup');
+          const groupData = await groupResponse.json();
+          if (groupResponse.ok) {
+            setGroups(groupData.groups);
+          }
+        }
+
         navigate('/sign-in'); // Redirect to sign-in page
       } else {
         setErrorMessage(data.message);
       }
-    } catch (error){
+    } catch (error) {
       setErrorMessage(error.message);
       setLoading(false);
     }
-  }
+  };
 
   return (
     <div className='min-h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-800'>
@@ -75,27 +130,69 @@ export default function SignUp() {
 
         <div className='text-center'>
           <form className='inline-block w-full max-w-md mx-auto' onSubmit={handleSubmit}>
+            {/* Role Selection */}
             <div className='mb-4'>
-              <Label htmlFor='username' value="Your username" /><span className="text-red-500">*</span>
-              <TextInput type='text' placeholder='username' id='username' className='w-full' onChange={handleChange}/>
+              <Label htmlFor='role' value='Select Role' />
+              <Select id='role' onChange={handleRoleChange} value={role}>
+                <option value='normalUser'>Normal User</option>
+                <option value='Group Admin'>Group Admin</option>
+              </Select>
             </div>
-            <div className='mb-4'>
-              <Label htmlFor='email' value="Email" /><span className="text-red-500">*</span>
-              <TextInput type='email' placeholder='name@company.com' id='email' className='w-full' onChange={handleChange}/>
-            </div>
-            <div className='mb-4'>
-              <Label htmlFor='password' value="Password" /><span className="text-red-500">*</span>
-              <TextInput type='password' placeholder='********' id='password' className='w-full' onChange={handleChange}/>
-            </div>
+
+            {/* Conditional Rendering for Group Admin */}
+            {role === 'Group Admin' && (
+              <>
+                <div className='mb-4'>
+                  <Label htmlFor='groupName' value='Group Name' /><span className='text-red-500'>*</span>
+                  <TextInput type='text' placeholder='Enter group name' id='groupName' className='w-full' onChange={(e) => setGroupName(e.target.value.trim())} />
+                </div>
+                <div className='mb-4'>
+                  <Label htmlFor='groupDescription' value='Group Description' /><span className='text-red-500'>*</span>
+                  <Textarea placeholder='Describe your group' id='groupDescription' className='w-full' onChange={(e) => setGroupDescription(e.target.value.trim())} />
+                </div>
+              </>
+            )}
+
+            {/* Conditional Rendering for Both Roles */}
+            {(role === 'normalUser' || role === 'Group Admin') && (
+              <>
+                <div className='mb-4'>
+                  <Label htmlFor='username' value='Your username' /><span className='text-red-500'>*</span>
+                  <TextInput type='text' placeholder='username' id='username' className='w-full' onChange={handleChange} />
+                </div>
+                <div className='mb-4'>
+                  <Label htmlFor='email' value='Email' /><span className='text-red-500'>*</span>
+                  <TextInput type='email' placeholder='name@company.com' id='email' className='w-full' onChange={handleChange} />
+                </div>
+                <div className='mb-4'>
+                  <Label htmlFor='password' value='Password' /><span className='text-red-500'>*</span>
+                  <TextInput type='password' placeholder='********' id='password' className='w-full' onChange={handleChange} />
+                </div>
+                {role === 'normalUser' && (
+                  <div className='mb-4'>
+                    <Label htmlFor='group' value='Select Group (Optional)' />
+                    <Select id='group' onChange={handleChange} value={formData.group || ''}>
+                      <option value=''>Select a group (optional)</option>
+                      {groups.map((g) => (
+                        <option key={g._id} value={g._id}>
+                          {g.name}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                )}
+              </>
+            )}
+
             <Button className='w-full mt-4 bg-red-700' type='submit' disabled={loading} outline>
-              {
-                loading ? (
-                  <>
+              {loading ? (
+                <>
                   <Spinner size='sm' />
-                    <span className='p-3'> Loading... </span>
-                  </>
-                  ) : (  'Sign Up' )
-              }
+                  <span className='p-3'> Loading... </span>
+                </>
+              ) : (
+                'Sign Up'
+              )}
             </Button>
             <OAuth />
           </form>
@@ -104,10 +201,10 @@ export default function SignUp() {
               <Link to='/sign-in' className='font-bold text-purple-600 dark:text-purple-400 ml-1'> Sign In</Link>
             </span>
           </div>
-          { errorMessage && ( 
+          {errorMessage && (
             <Alert className='mt-4' color='failure'>
               {errorMessage}
-              </Alert>
+            </Alert>
           )}
         </div>
       </div>
