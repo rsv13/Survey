@@ -16,78 +16,71 @@ const getNextSurveyUsername = async () => {
   return `SWSWBS${number}`;
 };
 
-//Sign up function
+// Sign up function
 export const signup = async (req, res) => {
-  const {
-    username,
-    email,
-    password,
-    role,
-    name, // Group name for Group Admin
-    description, // Group description for Group Admin
-    group, // Group ID for normal users
-  } = req.body;
-
   try {
-    // Validate required fields based on role
-    if (!username || !email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Username, email, and password are required" });
-    }
-
-    const surveyUsername = await getNextSurveyUsername();
-
-    if (role === "Group Admin" && (!name || !description)) {
-      return res.status(400).json({
-        message: "Group name and description are required for Group Admin",
-      });
-    }
+    const {
+      username,
+      email,
+      password,
+      role,
+      groupName,
+      groupDescription,
+      groupId,
+    } = req.body;
 
     // Check if user already exists
-    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Create a new user
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Generate surveyUsername
+    const surveyUsername = await getNextSurveyUsername();
+
+    // Create new user
+    const hashedPassword = await bcrypt.hash(password, 12);
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
       role,
-      surveyUsername, // Assign surveyUsername
+      surveyUsername,
+      groupId: role === "Group Admin" ? null : groupId || null, // Handle groupId based on role
     });
 
-    if (role === "Group Admin") {
-      // Create the new group
+    // Save user
+    await newUser.save();
+
+    // Create group if role is Group Admin and group details are provided
+    if (role === "Group Admin" && groupName && groupDescription) {
       const newGroup = new Group({
-        name, // Group name
-        description, // Group description
-        createdBy: newUser._id,
-        admins: [newUser._id], // Add the creator as an admin
+        name: groupName,
+        description: groupDescription,
+        createdBy: newUser._id, // Set the new user as the group creator/admin
+        admins: [newUser._id], // Add the new user as the group's admin
+        members: [], // No members initially
       });
 
       await newGroup.save();
 
-      // Update the newUser with the group information
-      newUser.groupId = newGroup._id; // Set groupId to the newly created group
-    } else {
-      // For normal users, assign the provided group ID
-      newUser.groupId = group || null; // Assign the group ID if provided
+      // Update user's groupId
+      newUser.groupId = newGroup._id;
+      await newUser.save();
     }
 
-    await newUser.save();
-
-    // If role is 'Group Admin', update the group with admin information
-    if (role === "Group Admin") {
-      await Group.findByIdAndUpdate(newGroup._id, {
-        $addToSet: { admins: newUser._id },
-      });
+    // Update the Group document if the user is a normalUser and has a groupId
+    if (role === "normalUser" && groupId) {
+      const group = await Group.findById(groupId);
+      if (group) {
+        group.members.push(newUser._id); // Add the user's ID to the members array
+        await group.save();
+      } else {
+        return res.status(404).json({ message: "Group not found" });
+      }
     }
 
-    // Generate token
+    // Generate JWT token
     const token = jwt.sign(
       { id: newUser._id, role: newUser.role },
       process.env.JWT_SECRET,
@@ -97,9 +90,10 @@ export const signup = async (req, res) => {
     res.status(201).json({
       message: "User created successfully",
       token,
+      user: newUser,
     });
   } catch (error) {
-    console.error("Error during signup:", error);
+    console.error("Signup Backend Error:", error); // Log the error to the server console
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -174,7 +168,7 @@ export const google = async (req, res, next) => {
       profilePicture: googlePhotoUrl,
       surveyUsername,
       role: "normalUser", // Default to 'normalUser'
-      group: null, // No group assigned by default
+      groupId: null, // No group assigned by default
     });
 
     await newUser.save();

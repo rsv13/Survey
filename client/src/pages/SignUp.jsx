@@ -39,6 +39,10 @@ export default function SignUp() {
 
   const handleRoleChange = (e) => {
     setRole(e.target.value);
+    if (e.target.value === 'normalUser') {
+      setGroupName('');
+      setGroupDescription('');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -63,8 +67,9 @@ export default function SignUp() {
       const payload = {
         ...formData,
         role,
-        name: role === 'Group Admin' ? groupName : undefined, // Only include if Group Admin
-        description: role === 'Group Admin' ? groupDescription : undefined, // Only include if Group Admin
+        groupName: role === 'Group Admin' ? groupName : undefined,
+        groupDescription: role === 'Group Admin' ? groupDescription : undefined,
+        groupId: role === 'normalUser' ? formData.groupId || null : undefined // Send groupId only for normal users
       };
 
       const res = await fetch('/api/auth/signup', {
@@ -79,15 +84,6 @@ export default function SignUp() {
       if (res.ok) {
         setErrorMessage(null);
         alert(data.message); // Show success message
-
-        // If the role is Group Admin, fetch and update the group list
-        if (role === 'Group Admin') {
-          const groupResponse = await fetch('/api/group/allGroup');
-          const groupData = await groupResponse.json();
-          if (groupResponse.ok) {
-            setGroups(groupData.groups);
-          }
-        }
 
         navigate('/sign-in'); // Redirect to sign-in page
       } else {
@@ -170,8 +166,8 @@ export default function SignUp() {
                 </div>
                 {role === 'normalUser' && (
                   <div className='mb-4'>
-                    <Label htmlFor='group' value='Select Group (Optional)' />
-                    <Select id='group' onChange={handleChange} value={formData.group || ''}>
+                    <Label htmlFor='groupId' value='Select Group (Optional)' />
+                    <Select id='groupId' onChange={handleChange} value={formData.groupId || ''}>
                       <option value=''>Select a group (optional)</option>
                       {groups.map((g) => (
                         <option key={g._id} value={g._id}>
