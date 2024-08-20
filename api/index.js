@@ -7,7 +7,6 @@ import authRoutes from "./routes/auth.route.js";
 import groupRoutes from "./routes/group.route.js"; // Import group routes
 import surveyRoutes from "./routes/survey.route.js";
 import userRoutes from "./routes/user.route.js";
-import groupRoutes from "./routes/group.route.js"; // Import group routes
 
 dotenv.config();
 
@@ -16,7 +15,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 
-// MongoDB connection
 mongoose
   .connect(process.env.MONGO)
   .then(() => {
@@ -26,17 +24,15 @@ mongoose
     console.log(err);
   });
 
-// Define routes
+app.listen(3000, () => {
+  console.log("Server is running on port 3000");
+});
+
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/survey", surveyRoutes);
-<<<<<<< HEAD
-app.use("/api/groups", groupRoutes); // Add group routes
-=======
 app.use("/api/group", groupRoutes);
->>>>>>> c99a19b (Creation of Group API, user role and modifying the signup page accordingly)
 
-// Global error handler
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message;
@@ -45,9 +41,4 @@ app.use((err, req, res, next) => {
     statusCode,
     message,
   });
-});
-
-// Start server
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
 });

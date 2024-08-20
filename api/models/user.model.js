@@ -18,18 +18,12 @@ const userSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
-      default:
-        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+      default: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
     },
     role: {
       type: String,
-<<<<<<< HEAD
-      enum: ["normalUser", "groupAdmin", "admin"], // Enum to restrict values
-      default: "normalUser", // Default role if not specified
-=======
-      enum: ["normalUser", "Group Admin", "Admin"],
-      default: "normalUser",
->>>>>>> c99a19b (Creation of Group API, user role and modifying the signup page accordingly)
+      enum: ['normalUser', 'Group Admin', 'Admin'],
+      default: 'normalUser',
     },
     surveysSubmitted: {
       type: Number,
@@ -40,17 +34,9 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-<<<<<<< HEAD
-    groupName: {
-      type: String,
-    },
-    groupDescription: {
-      type: String,
-=======
-    group: {
+    groupId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Group", // Reference to the Group model
->>>>>>> c99a19b (Creation of Group API, user role and modifying the signup page accordingly)
+      ref: 'Group',
     },
   },
   { timestamps: true }

@@ -3,37 +3,6 @@ import {
   addUserToGroup,
   createGroup,
   deleteGroup,
-<<<<<<< HEAD
-  getGroupById,
-  getGroups,
-  removeUserFromGroup,
-  updateGroup,
-} from "../controllers/group.controller.js";
-import { verifyAdmin, verifyGroupAdmin } from "../utils/verifyUser.js";
-
-const router = express.Router();
-
-// Create a new group (Admins can create groups, GroupAdmins cannot create groups)
-router.post("/", verifyAdmin, createGroup);
-
-// Get all groups created by the authenticated user
-router.get("/", verifyAdmin, getGroups);
-
-// Get a specific group by ID
-router.get("/:id", verifyAdmin, getGroupById);
-
-// Update a group
-router.put("/:id", verifyAdmin, updateGroup);
-
-// Delete a group
-router.delete("/:id", verifyAdmin, deleteGroup);
-
-// Add a user to a group
-router.post("/:groupId/users", verifyGroupAdmin, addUserToGroup);
-
-// Remove a user from a group
-router.delete("/:groupId/users", verifyGroupAdmin, removeUserFromGroup);
-=======
   getAllGroups,
   getGroupDetails,
   removeUserFromGroup,
@@ -59,6 +28,5 @@ router.post("/remove-user", verifyToken, isGroupAdmin, removeUserFromGroup);
 
 // Route to delete a group (only Admins can delete groups)
 router.delete("/:groupId", verifyToken, isAdmin, deleteGroup);
->>>>>>> c99a19b (Creation of Group API, user role and modifying the signup page accordingly)
 
 export default router;
