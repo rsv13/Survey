@@ -1,9 +1,7 @@
-// components/DashSidebar.jsx
-
 import { Sidebar } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
 import { FcSurvey } from "react-icons/fc";
-import { HiChartPie, HiOutlineUserGroup, HiUser } from 'react-icons/hi';
+import { HiChartPie, HiOutlineUserGroup, HiUser, HiUsers } from 'react-icons/hi';
 import { RiShutDownLine } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -77,6 +75,20 @@ export default function DashSidebar() {
               Surveys
             </Sidebar.Item>
           </Link>
+
+          {/* Conditionally render the Groups tab */}
+          {(currentUser.role === 'Admin' || currentUser.role === 'Group Admin') && (
+            <Link to='/dashboard?tab=groups'>
+              <Sidebar.Item
+                active={tab === 'groups'}
+                icon={HiUsers}
+                as='div'
+              >
+                Groups
+              </Sidebar.Item>
+            </Link>
+          )}
+
           {currentUser.role === 'Admin' && (
             <Link to='/dashboard?tab=users'>
               <Sidebar.Item
