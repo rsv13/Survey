@@ -81,7 +81,7 @@ export const signout = async (req, res, next) => {
 
 // Endpoint to get all users - Accessible by Admins only
 export const getUsers = async (req, res, next) => {
-  if (!req.user.isAdmin) {
+  if (req.user.role !== "Admin") {
     return next(errorHandler(403, "You are not allowed to see all users"));
   }
   try {

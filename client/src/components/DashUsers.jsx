@@ -13,7 +13,7 @@ export default function DashUsers() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch(`/api/user/getUsers`);
+        const res = await fetch('/api/user/getUsers');
         const data = await res.json();
         if (res.ok) {
           setUsers(data.users);
@@ -25,7 +25,7 @@ export default function DashUsers() {
         console.log(error.message);
       }
     };
-    if (currentUser.isAdmin) {
+    if (currentUser.role === "Admin") {
       fetchUsers();
     }
   }, [currentUser._id]);
