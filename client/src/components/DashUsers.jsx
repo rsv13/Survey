@@ -26,6 +26,7 @@ export default function DashUsers() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+<<<<<<< HEAD
         let url = '/api/user/getusers';
         
         // For Group Admin, fetch users in the group
@@ -34,6 +35,9 @@ export default function DashUsers() {
         }
         
         const res = await fetch(url);
+=======
+        const res = await fetch(`/api/user/getUsers`);
+>>>>>>> d5ed3df (minor changes to the getUser in DashUser)
         const data = await res.json();
         if (res.ok) {
           setUsers(data.users || data);
