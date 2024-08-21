@@ -18,7 +18,7 @@ export default function DashGroups() {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        let url = '/api/group/allGroup'; // Default URL
+        let url = '/api/group/allGroup';
         if (currentUser.role === 'Group Admin') {
           url = '/api/group/group-admin/groups'; // URL for Group Admins
         }
@@ -36,9 +36,11 @@ export default function DashGroups() {
         }
 
         const data = await res.json();
-        console.log('Fetched groups:', data); // Debugging line
-        setGroups(data); // Use the array directly if response is an array
-        setFilteredGroups(data); // Use the array directly if response is an array
+
+        // Set groups and filteredGroups state
+        const groupsData = data.groups || data;
+        setGroups(groupsData);
+        setFilteredGroups(groupsData);
       } catch (error) {
         console.error('Error fetching groups:', error.message);
       }
@@ -49,7 +51,6 @@ export default function DashGroups() {
 
   // Filter groups based on search query
   useEffect(() => {
-
     if (searchQuery) {
       setFilteredGroups(
         groups.filter(group =>
@@ -79,6 +80,8 @@ export default function DashGroups() {
 
       const data = await res.json();
       console.log('Delete response data:', data);
+
+      // Update state after deletion
       setGroups(prev => prev.filter(group => group._id !== groupIdToDelete));
       setFilteredGroups(prev => prev.filter(group => group._id !== groupIdToDelete));
       setShowDeleteModal(false);
