@@ -18,12 +18,17 @@ export default function DashGroups() {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        let url = '/api/group/allGroup';
+        let url = '/api/group/allGroup'; // Default URL
         if (currentUser.role === 'Group Admin') {
-          url = `/api/group/allGroup?createdBy=${currentUser.id}`;
+          url = '/api/group/group-admin/groups'; // URL for Group Admins
         }
 
-        const res = await fetch(url);
+        const res = await fetch(url, {
+          headers: {
+            'Authorization': `Bearer ${currentUser.token}`, // Include token in headers
+          },
+        });
+
         if (!res.ok) {
           const errorText = await res.text();
           console.error('Failed to fetch groups:', errorText);
@@ -31,8 +36,9 @@ export default function DashGroups() {
         }
 
         const data = await res.json();
-        setGroups(data.groups || []);
-        setFilteredGroups(data.groups || []);
+        console.log('Fetched groups:', data); // Debugging line
+        setGroups(data); // Use the array directly if response is an array
+        setFilteredGroups(data); // Use the array directly if response is an array
       } catch (error) {
         console.error('Error fetching groups:', error.message);
       }
@@ -43,6 +49,7 @@ export default function DashGroups() {
 
   // Filter groups based on search query
   useEffect(() => {
+
     if (searchQuery) {
       setFilteredGroups(
         groups.filter(group =>
@@ -59,7 +66,11 @@ export default function DashGroups() {
     try {
       const res = await fetch(`/api/group/${groupIdToDelete}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${currentUser.token}`, // Include token in headers
+        },
       });
+
       if (!res.ok) {
         const errorText = await res.text();
         console.error('Failed to delete group:', errorText);
@@ -100,7 +111,9 @@ export default function DashGroups() {
             <Table.HeadCell>Group Name</Table.HeadCell>
             <Table.HeadCell>Description</Table.HeadCell>
             <Table.HeadCell>No. of Users</Table.HeadCell>
-            {currentUser.role === 'Admin' && <Table.HeadCell>Actions</Table.HeadCell>}
+            {(currentUser.role === 'Admin' || currentUser.role === 'Group Admin') && (
+              <Table.HeadCell>Actions</Table.HeadCell>
+            )}
           </Table.Head>
           <Table.Body className='divide-y'>
             {filteredGroups.map((group) => (
@@ -109,20 +122,22 @@ export default function DashGroups() {
                 <Table.Cell>{group.name || 'N/A'}</Table.Cell>
                 <Table.Cell>{group.description || 'N/A'}</Table.Cell>
                 <Table.Cell>{group.members.length || 0}</Table.Cell>
-                {currentUser.role === 'Admin' && (
+                {(currentUser.role === 'Admin' || currentUser.role === 'Group Admin') && (
                   <Table.Cell>
                     <Button onClick={() => handleViewDetails(group._id)} color='light'>
                       View Details
                     </Button>
-                    <Button
-                      onClick={() => {
-                        setGroupIdToDelete(group._id);
-                        setShowDeleteModal(true);
-                      }}
-                      color='failure'
-                    >
-                      Delete
-                    </Button>
+                    {currentUser.role === 'Admin' && (
+                      <Button
+                        onClick={() => {
+                          setGroupIdToDelete(group._id);
+                          setShowDeleteModal(true);
+                        }}
+                        color='failure'
+                      >
+                        Delete
+                      </Button>
+                    )}
                   </Table.Cell>
                 )}
               </Table.Row>
