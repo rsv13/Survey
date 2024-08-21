@@ -204,3 +204,24 @@ export const getUserDetails = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+// Function to get users grouped and ungrouped
+export const getUsersGroupedAndUngrouped = async (req, res, next) => {
+  try {
+    // Fetch users in groups with group details
+    const usersInGroups = await User.find({ groupId: { $ne: null } })
+      .populate('groupId', 'name description') // Populate the group details
+      .exec();
+    
+    // Fetch users not in any group
+    const usersNotInGroups = await User.find({ groupId: null }).exec();
+
+    res.status(200).json({
+      usersInGroups,
+      usersNotInGroups
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

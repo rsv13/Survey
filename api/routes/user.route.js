@@ -3,6 +3,7 @@ import {
   deleteUser,
   getUserDetails,
   getUsers,
+  getUsersGroupedAndUngrouped,
   signout,
   test,
   updateUser,
@@ -17,5 +18,10 @@ router.delete("/delete/:userId", verifyToken, deleteUser);
 router.post("/signout", signout);
 router.get("/getusers", verifyToken, getUsers);
 router.get("/details", verifyToken, getUserDetails);
+router.get(
+  "/users-grouped-and-ungrouped",
+  verifyToken,
+  getUsersGroupedAndUngrouped
+);
 
 export default router;

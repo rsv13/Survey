@@ -96,62 +96,70 @@ export default function DashGroups() {
   };
 
   return (
-    <div className='p-3'>
-      <div className='flex items-center mb-4'>
-        <TextInput
-          type='text'
-          placeholder='Search groups...'
-          rightIcon={AiOutlineSearch}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className='w-full max-w-md'
-        />
-      </div>
-      {filteredGroups.length > 0 ? (
-        <Table hoverable className='shadow-md'>
-          <Table.Head>
-            <Table.HeadCell>Created At</Table.HeadCell>
-            <Table.HeadCell>Group Name</Table.HeadCell>
-            <Table.HeadCell>Description</Table.HeadCell>
-            <Table.HeadCell>No. of Users</Table.HeadCell>
-            {(currentUser.role === 'Admin' || currentUser.role === 'Group Admin') && (
-              <Table.HeadCell>Actions</Table.HeadCell>
-            )}
-          </Table.Head>
-          <Table.Body className='divide-y'>
-            {filteredGroups.map((group) => (
-              <Table.Row key={group._id} className='bg-white dark:border-gray-700 dark:bg-gray-800'>
-                <Table.Cell>{new Date(group.createdAt).toLocaleDateString()}</Table.Cell>
-                <Table.Cell>{group.name || 'N/A'}</Table.Cell>
-                <Table.Cell>{group.description || 'N/A'}</Table.Cell>
-                <Table.Cell>{group.members.length || 0}</Table.Cell>
-                {(currentUser.role === 'Admin' || currentUser.role === 'Group Admin') && (
-                  <Table.Cell>
-                    <Button onClick={() => handleViewDetails(group._id)} color='light'>
-                      View Details
-                    </Button>
-                    {currentUser.role === 'Admin' && (
-                      <Button
-                        onClick={() => {
-                          setGroupIdToDelete(group._id);
-                          setShowDeleteModal(true);
-                        }}
-                        color='failure'
-                      >
-                        Delete
-                      </Button>
-                    )}
-                  </Table.Cell>
-                )}
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table>
-      ) : (
-        <div className='text-center mt-4'>
-          <p>No groups found!</p>
+    <div className='p-6 bg-gray-100 dark:bg-gray-900 min-h-screen'>
+      <div className='container mx-auto bg-white dark:bg-gray-800 p-6 shadow-lg rounded-lg'>
+        <div className='flex items-center mb-4'>
+          <TextInput
+            type='text'
+            placeholder='Search groups...'
+            rightIcon={AiOutlineSearch}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className='w-full max-w-md border-gray-300 dark:border-gray-700'
+          />
         </div>
-      )}
+
+        {filteredGroups.length > 0 ? (
+          <div className='overflow-x-auto'>
+            <Table hoverable className='min-w-full bg-white dark:bg-gray-800'>
+              <Table.Head>
+                <Table.HeadCell>Created At</Table.HeadCell>
+                <Table.HeadCell>Group Name</Table.HeadCell>
+                <Table.HeadCell>Description</Table.HeadCell>
+                <Table.HeadCell>No. of Users</Table.HeadCell>
+                {(currentUser.role === 'Admin' || currentUser.role === 'Group Admin') && (
+                  <Table.HeadCell>Actions</Table.HeadCell>
+                )}
+              </Table.Head>
+              <Table.Body className='divide-y divide-gray-200 dark:divide-gray-700'>
+                {filteredGroups.map((group) => (
+                  <Table.Row key={group._id} className='bg-gray-50 dark:bg-gray-900'>
+                    <Table.Cell>{new Date(group.createdAt).toLocaleDateString()}</Table.Cell>
+                    <Table.Cell>{group.name || 'N/A'}</Table.Cell>
+                    <Table.Cell>{group.description || 'N/A'}</Table.Cell>
+                    <Table.Cell>{group.members.length || 0}</Table.Cell>
+                    {(currentUser.role === 'Admin' || currentUser.role === 'Group Admin') && (
+                      <Table.Cell>
+                        <div className='flex space-x-2'>
+                          <Button onClick={() => handleViewDetails(group._id)} color='light'>
+                            View Details
+                          </Button>
+                          {currentUser.role === 'Admin' && (
+                            <Button
+                              onClick={() => {
+                                setGroupIdToDelete(group._id);
+                                setShowDeleteModal(true);
+                              }}
+                              color='failure'
+                            >
+                              Delete
+                            </Button>
+                          )}
+                        </div>
+                      </Table.Cell>
+                    )}
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table>
+          </div>
+        ) : (
+          <div className='text-center mt-4'>
+            <p>No groups found!</p>
+          </div>
+        )}
+      </div>
+
       <Modal
         show={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
@@ -161,9 +169,9 @@ export default function DashGroups() {
         <Modal.Header>Confirm Deletion</Modal.Header>
         <Modal.Body>
           <div className='text-center'>
-            <HiOutlineExclamationCircle className='w-16 h-16 text-red-500 mx-auto' />
-            <p>Are you sure you want to delete this group?</p>
-            <div className='flex justify-center mt-4 gap-4'>
+            <HiOutlineExclamationCircle className='w-16 h-16 text-red-500 mx-auto mb-4' />
+            <p className='mb-4'>Are you sure you want to delete this group?</p>
+            <div className='flex justify-center gap-4'>
               <Button color='failure' onClick={handleDeleteGroup}>
                 Yes, delete
               </Button>

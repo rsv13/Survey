@@ -54,6 +54,7 @@ export default function DashSidebar() {
               </Sidebar.Item>
             </Link>
           )}
+          
           <Link to='/dashboard?tab=profile'>
             <Sidebar.Item
               active={tab === 'profile'}
@@ -85,6 +86,18 @@ export default function DashSidebar() {
                 as='div'
               >
                 Groups
+              </Sidebar.Item>
+            </Link>
+          )}
+
+          {currentUser.role === 'Admin' && (
+            <Link to='/dashboard?tab=usersOverviews'>
+              <Sidebar.Item
+                active={tab === 'dash' || !tab}
+                icon={HiChartPie}
+                as='div'
+              >
+                Users Overview
               </Sidebar.Item>
             </Link>
           )}

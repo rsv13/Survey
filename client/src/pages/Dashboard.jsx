@@ -5,6 +5,7 @@ import DashGroupUsers from '../components/DashGroupUsers';
 import DashProfile from '../components/DashProfile';
 import DashSidebar from '../components/DashSidebar';
 import DashSurvey from '../components/DashSurvey';
+import DashUserOverviews from '../components/DashUserOverviews';
 import DashUsers from '../components/DashUsers';
 import DashboardComp from '../components/DashboardComp';
 
@@ -40,6 +41,8 @@ export default function Dashboard() {
           { tab === 'groups' && <DashGroups />}
           {/* Group Users */}
           {tab === 'groupsUsers' && <DashGroupUsers />} 
+          {/*User Overviews */}
+          { tab === 'usersOverviews' && <DashUserOverviews />}
       </div>
 
   )
