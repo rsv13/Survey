@@ -122,26 +122,6 @@ export const getUsers = async (req, res, next) => {
   }
 };
 
-// Endpoint to get users in a specific group - Accessible by Group Admins
-export const getUsersInGroup = async (req, res, next) => {
-  try {
-    const group = await Group.findById(req.params.groupId).populate("members");
-
-    if (!group) {
-      return next(errorHandler(404, "Group not found"));
-    }
-
-    // Check if the user is a Group Admin for this group
-    if (!group.admins.includes(req.user._id) && req.user.role !== "Admin") {
-      return next(errorHandler(403, "Access denied"));
-    }
-
-    res.status(200).json(group.members);
-  } catch (error) {
-    next(error);
-  }
-};
-
 // Endpoint to get responses for users in a specific group - Accessible by Group Admins
 export const getGroupResponses = async (req, res, next) => {
   try {
