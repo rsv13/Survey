@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
 import authRoutes from "./routes/auth.route.js";
-import groupRoutes from "./routes/group.route.js"; // Import group routes
+import groupRoutes from "./routes/group.route.js";
 import surveyRoutes from "./routes/survey.route.js";
 import userRoutes from "./routes/user.route.js";
 

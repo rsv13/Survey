@@ -26,7 +26,7 @@ export const isAdmin = (req, res, next) => {
 
 // Middleware to check if the user is a Group Admin
 export const isGroupAdmin = (req, res, next) => {
-  if (req.user.role !== "Group Admin") {
+  if (req.user.role !== "Group Admin" && req.user.role !== "Admin") {
     return res.status(403).json({ error: "Access denied" });
   }
   next();

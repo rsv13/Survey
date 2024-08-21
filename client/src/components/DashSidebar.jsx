@@ -89,7 +89,19 @@ export default function DashSidebar() {
             </Link>
           )}
 
-          {currentUser.role === 'Admin' && (
+          {(currentUser.role === 'Admin' || currentUser.role === 'Group Admin') && (
+            <Link to='/dashboard?tab=groupsUsers'>
+              <Sidebar.Item
+                active={tab === 'groupsUsers'}
+                icon={HiUsers}
+                as='div'
+              >
+                Users in Group
+              </Sidebar.Item>
+            </Link>
+          )}
+
+          {(currentUser.role === 'Admin' ) && (
             <Link to='/dashboard?tab=users'>
               <Sidebar.Item
                 active={tab === 'users'}

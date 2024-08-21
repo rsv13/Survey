@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import DashGroups from '../components/DashGroup';
+import DashGroupUsers from '../components/DashGroupUsers';
 import DashProfile from '../components/DashProfile';
 import DashSidebar from '../components/DashSidebar';
 import DashSurvey from '../components/DashSurvey';
@@ -37,6 +38,8 @@ export default function Dashboard() {
           { tab === 'users' && <DashUsers />}
           {/* Groups */}
           { tab === 'groups' && <DashGroups />}
+          {/* Group Users */}
+          {tab === 'groupsUsers' && <DashGroupUsers />} 
       </div>
 
   )

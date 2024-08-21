@@ -7,13 +7,14 @@ import {
   getAdminGroups,
   getAllGroups,
   getGroupDetails,
+  getUsersInGroup,
   removeUserFromGroup,
 } from "../controllers/group.controller.js";
 import { isAdmin, isGroupAdmin, verifyToken } from "../utils/verifyUser.js";
 
 const router = express.Router();
 
-// Route to get all available groups
+// Route to get all available groups (public access)
 router.get("/allGroup", getAllGroups);
 
 // Route to create a new group (only Group Admins and Admins can create groups)
@@ -41,5 +42,7 @@ router.get(
   isGroupAdmin,
   getAdminGroupCluster
 );
+
+router.get("/:groupId/users", verifyToken, isGroupAdmin, getUsersInGroup);
 
 export default router;
