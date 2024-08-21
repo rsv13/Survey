@@ -10,6 +10,7 @@ import PrivateRoute from './components/PrivateRoute';
 import About from './pages/About';
 import ContactUs from './pages/ContactUs';
 import Dashboard from './pages/Dashboard';
+import GroupDetails from './pages/GroupDetails';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Publication from './pages/Publication';
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="/survey" element={<Survey />} />
           <Route path="/results" element={<Results />} />
           <Route path="/survey-details" element={<SurveyDetails />} />
+          <Route path="/group-details" element={<GroupDetails />} />
         </Route>
       
       </Routes>
