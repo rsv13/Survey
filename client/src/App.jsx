@@ -14,7 +14,6 @@ import GroupDetails from './pages/GroupDetails';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Publication from './pages/Publication';
-import Results from './pages/Results';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Survey from './pages/Survey';
