@@ -18,7 +18,7 @@ const router = express.Router();
 router.get("/allGroup", getAllGroups);
 
 // Route to create a new group (only Group Admins and Admins can create groups)
-router.post("/create", verifyToken, isGroupAdmin, createGroup);
+router.post("/createGroup", verifyToken, isGroupAdmin, isAdmin, createGroup);
 
 // Route to get details of a specific group, including its users
 router.get("/:groupId", verifyToken, getGroupDetails);

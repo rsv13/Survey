@@ -16,7 +16,12 @@ export const getAllGroups = async (req, res) => {
 
 // Create a new group (Group Admins and Admins can create groups)
 export const createGroup = async (req, res, next) => {
+  console.log(req.user);
   const { name, description } = req.body;
+
+  if (req.user.role !== "Admin" && req.user.role !== "Group Admin") {
+    return next(errorHandler(403, "You are not allowed to create a group"));
+  }
 
   if (!name || !description) {
     return next(errorHandler(400, "Group name and description are required"));
@@ -27,6 +32,8 @@ export const createGroup = async (req, res, next) => {
       name,
       description,
       createdBy: req.user.id,
+      admins: [req.user.id],
+      members: [],
     });
 
     await newGroup.save();

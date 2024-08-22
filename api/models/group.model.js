@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 const groupSchema = new mongoose.Schema(
   {
     name: {
-      // Adjusted to be consistent
       type: String,
       required: true,
       unique: true,
