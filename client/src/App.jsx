@@ -4,11 +4,13 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // Components
 import Footer from './components/Footer';
 import Header from './components/Header';
+import OnlyAdminPrivateRoute from './components/OnlyAdminPrivateRoute';
 import PrivateRoute from './components/PrivateRoute';
 
 // Pages
 import About from './pages/About';
 import ContactUs from './pages/ContactUs';
+import CreateGroup from './pages/CreateGroup';
 import Dashboard from './pages/Dashboard';
 import GroupDetails from './pages/GroupDetails';
 import Home from './pages/Home';
@@ -32,6 +34,12 @@ export default function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/about" element={<About />} />
         <Route path="/contactus" element={<ContactUs />} />
+
+      <Route element={<OnlyAdminPrivateRoute />} >
+          <Route path="/create-group" element={<CreateGroup />} />
+      </Route>
+
+
         
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />

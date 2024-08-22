@@ -69,13 +69,22 @@ export default function DashProfile() {
                 {
                     currentUser && (
                         <Link to='/survey'>
-                            <Button type='button' gradientDuoTone='purpleToPink' className='w-full mt-4'>
+                            <Button type='button' gradientDuoTone='purpleToBlue' className='w-full mt-4'>
                                 Take the survey
                             </Button>
                         </Link>
                     )
                 }
             </div>
+            { 
+                (currentUser.role === 'Admin' || currentUser.role === 'Group Admin') && (
+                    <Link to='/create-group'>
+                    <Button type = 'button' gradientDuoTone='purpleToPink' className='w-full mt-4'>
+                        Create a Group
+                        </Button>
+                    </Link>
+                )   
+            }
             <div className='text-red-500 flex justify-between mt-5'>
                 <span onClick={() => setShowModal(true)} className='cursor-pointer'>Delete Account</span>
                 <span onClick={handleSignout} className='cursor-pointer'>Sign Out</span>
