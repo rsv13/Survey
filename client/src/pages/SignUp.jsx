@@ -12,7 +12,7 @@ export default function SignUp() {
   });
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [groups, setGroups] = useState([]); 
+  const [groups, setGroups] = useState([]);
   const [role, setRole] = useState('normalUser'); // Default to normalUser
   const [groupName, setGroupName] = useState('');
   const [groupDescription, setGroupDescription] = useState('');
@@ -20,21 +20,21 @@ export default function SignUp() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch available groups on component mount
     const fetchGroups = async () => {
       try {
         const response = await fetch('/api/group/allGroup');
         const data = await response.json();
-        if (response.ok) {
-          setGroups(data.groups || []); 
+
+        if (Array.isArray(data)) {
+          setGroups(data); // Set groups directly as an array
         } else {
-          setErrorMessage(data.message || 'Failed to load groups');
+          setErrorMessage('Unexpected response format');
         }
       } catch (error) {
         setErrorMessage('Failed to fetch groups');
       }
     };
-
+  
     fetchGroups();
   }, []);
 
@@ -178,11 +178,17 @@ export default function SignUp() {
                     <Label htmlFor='groupId' value='Select Group (Optional)' />
                     <Select id='groupId' onChange={handleChange} value={formData.groupId || ''}>
                       <option value=''>Select a group (optional)</option>
-                      {groups && groups.map((g) => ( 
-                        <option key={g._id} value={g._id}>
-                          {g.name}
+                      {groups.length > 0 ? (
+                        groups.map((g) => (
+                          <option key={g._id} value={g._id}>
+                            {g.name}
+                          </option>
+                        ))
+                      ) : (
+                        <option value='' disabled>
+                          No groups available
                         </option>
-                      ))}
+                      )}
                     </Select>
                   </div>
                 )}
@@ -203,15 +209,17 @@ export default function SignUp() {
           </form>
           <div className='mt-4'>
             <span>Have an account? 
-              <Link to='/sign-in' className='font-bold text-purple-600 dark:text-purple-400 ml-1'> Sign In</Link>
+              <Link to='/sign-in' className='font-bold text-purple-600 dark:text-purple-400'>
+                {' '} Sign In
+              </Link>
             </span>
           </div>
-          {errorMessage && (
-            <Alert className='mt-4' color='failure'>
-              {errorMessage}
-            </Alert>
-          )}
         </div>
+        {errorMessage && (
+          <Alert color='failure' className='mt-4'>
+            <span>{errorMessage}</span>
+          </Alert>
+        )}
       </div>
     </div>
   );
