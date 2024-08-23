@@ -6,7 +6,7 @@ import { errorHandler } from "../utils/error.js";
 export const getAllGroups = async (req, res) => {
   try {
     const groups = await Group.find({});
-    res.status(200).json({ groups });
+    res.status(200).json(groups);
   } catch (error) {
     res
       .status(500)
@@ -53,14 +53,6 @@ export const getGroupDetails = async (req, res, next) => {
       return next(errorHandler(404, "Group not found"));
     }
 
-    // Debugging logs
-    console.log("Requesting User ID:", req.user?._id?.toString());
-    console.log("Group Created By:", group.createdBy?.toString());
-    console.log(
-      "Group Admins Array:",
-      group.admins?.map((admin) => admin.toString())
-    );
-
     // Check if the user has access
     if (
       req.user?.role === "Group Admin" &&
@@ -81,6 +73,12 @@ export const getGroupDetails = async (req, res, next) => {
 // Add a user to a group
 export const addUserToGroup = async (req, res, next) => {
   const { groupId, userId } = req.body;
+
+  if (req.user.role !== "Admin") {
+    return next(
+      errorHandler(403, "You are not allowed to add a user to a group")
+    );
+  }
 
   try {
     const group = await Group.findById(groupId);
@@ -105,6 +103,7 @@ export const addUserToGroup = async (req, res, next) => {
 
     res.status(200).json({ message: "User added to group" });
   } catch (error) {
+    console.error("Error in addUserToGroup:", error);
     next(error);
   }
 };

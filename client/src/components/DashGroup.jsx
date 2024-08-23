@@ -37,7 +37,6 @@ export default function DashGroups() {
 
         const data = await res.json();
 
-        // Set groups and filteredGroups state
         const groupsData = data.groups || data;
         setGroups(groupsData);
         setFilteredGroups(groupsData);
@@ -131,7 +130,7 @@ export default function DashGroups() {
                     {(currentUser.role === 'Admin' || currentUser.role === 'Group Admin') && (
                       <Table.Cell>
                         <div className='flex space-x-2'>
-                          <Button onClick={() => handleViewDetails(group._id)} color='light'>
+                          <Button onClick={() => handleViewDetails(group._id)} gradientMonochrome="info">
                             View Details
                           </Button>
                           {currentUser.role === 'Admin' && (

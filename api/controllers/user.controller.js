@@ -40,6 +40,14 @@ export const updateUser = async (req, res, next) => {
     }
   }
 
+  // Validate role if provided
+  if (req.body.role) {
+    const validRoles = ["normalUser", "Group Admin", "Admin"];
+    if (!validRoles.includes(req.body.role)) {
+      return next(errorHandler(400, "Invalid role value"));
+    }
+  }
+
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.userId,
@@ -210,18 +218,17 @@ export const getUsersGroupedAndUngrouped = async (req, res, next) => {
   try {
     // Fetch users in groups with group details
     const usersInGroups = await User.find({ groupId: { $ne: null } })
-      .populate('groupId', 'name description') // Populate the group details
+      .populate("groupId", "name description") // Populate the group details
       .exec();
-    
+
     // Fetch users not in any group
     const usersNotInGroups = await User.find({ groupId: null }).exec();
 
     res.status(200).json({
       usersInGroups,
-      usersNotInGroups
+      usersNotInGroups,
     });
   } catch (error) {
     next(error);
   }
 };
-

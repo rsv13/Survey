@@ -161,7 +161,7 @@ export default function DashSurveys() {
                     ].join(', ')}
                   </Table.Cell>
                   <Table.Cell>
-                    <Button onClick={() => handleViewClick(survey)}>View</Button>
+                    <Button gradientMonochrome="info" onClick={() => handleViewClick(survey)}>View</Button>
                   </Table.Cell>
                   {currentUser?.isAdmin && (
                     <Table.Cell>

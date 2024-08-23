@@ -23,7 +23,7 @@ router.post("/createGroup", verifyToken, isGroupAdmin, createGroup);
 // Route to get details of a specific group, including its users
 router.get("/:groupId", verifyToken, getGroupDetails);
 
-// Route to add a user to a group (Group Admins and Admins can add users)
+// Route to add a user to a group (Only Admins can add users)
 router.post("/add-user", verifyToken, isAdmin, addUserToGroup);
 
 // Route to remove a user from a group (Group Admins and Admins can remove users)
