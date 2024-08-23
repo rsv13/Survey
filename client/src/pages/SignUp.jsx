@@ -4,10 +4,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import OAuth from '../components/OAuth';
 
 export default function SignUp() {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    groupId: '',
+  });
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [groups, setGroups] = useState([]);
+  const [groups, setGroups] = useState([]); 
   const [role, setRole] = useState('normalUser'); // Default to normalUser
   const [groupName, setGroupName] = useState('');
   const [groupDescription, setGroupDescription] = useState('');
@@ -21,9 +26,9 @@ export default function SignUp() {
         const response = await fetch('/api/group/allGroup');
         const data = await response.json();
         if (response.ok) {
-          setGroups(data.groups);
+          setGroups(data.groups || []); 
         } else {
-          setErrorMessage(data.message);
+          setErrorMessage(data.message || 'Failed to load groups');
         }
       } catch (error) {
         setErrorMessage('Failed to fetch groups');
@@ -34,7 +39,11 @@ export default function SignUp() {
   }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value.trim(),
+    }));
   };
 
   const handleRoleChange = (e) => {
@@ -69,7 +78,7 @@ export default function SignUp() {
         role,
         groupName: role === 'Group Admin' ? groupName : undefined,
         groupDescription: role === 'Group Admin' ? groupDescription : undefined,
-        groupId: role === 'normalUser' ? formData.groupId || null : undefined // Send groupId only for normal users
+        groupId: role === 'normalUser' ? formData.groupId || null : undefined,
       };
 
       const res = await fetch('/api/auth/signup', {
@@ -87,10 +96,10 @@ export default function SignUp() {
 
         navigate('/sign-in'); // Redirect to sign-in page
       } else {
-        setErrorMessage(data.message);
+        setErrorMessage(data.message || 'Signup failed. Please try again.');
       }
     } catch (error) {
-      setErrorMessage(error.message);
+      setErrorMessage('An error occurred during signup. Please try again.');
       setLoading(false);
     }
   };
@@ -169,7 +178,7 @@ export default function SignUp() {
                     <Label htmlFor='groupId' value='Select Group (Optional)' />
                     <Select id='groupId' onChange={handleChange} value={formData.groupId || ''}>
                       <option value=''>Select a group (optional)</option>
-                      {groups.map((g) => (
+                      {groups && groups.map((g) => ( 
                         <option key={g._id} value={g._id}>
                           {g.name}
                         </option>
