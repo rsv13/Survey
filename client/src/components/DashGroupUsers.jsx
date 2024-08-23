@@ -16,13 +16,9 @@ export default function DashGroupUsers() {
   const groupId = currentUser?.groupId;
 
   useEffect(() => {
-    // Debugging log
-    console.log('Group ID:', groupId);
-    console.log('Current User:', currentUser);
 
     const fetchUsers = async () => {
       if (!currentUser || !groupId) {
-        console.log('No currentUser or groupId'); // Debugging
         return;
       }
 
@@ -40,7 +36,6 @@ export default function DashGroupUsers() {
         }
 
         const data = await res.json();
-        console.log('Fetched users:', data); // Debugging
         setUsers(data); // Adjust based on response structure
         setFilteredUsers(data);
       } catch (error) {
@@ -79,7 +74,6 @@ export default function DashGroupUsers() {
       }
 
       const data = await res.json();
-      console.log('Delete response data:', data); // Debugging
       setUsers(prev => prev.filter(user => user._id !== userIdToDelete));
       setFilteredUsers(prev => prev.filter(user => user._id !== userIdToDelete));
       setShowDeleteModal(false);

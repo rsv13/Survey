@@ -18,13 +18,13 @@ const router = express.Router();
 router.get("/allGroup", getAllGroups);
 
 // Route to create a new group (only Group Admins and Admins can create groups)
-router.post("/createGroup", verifyToken, isGroupAdmin, isAdmin, createGroup);
+router.post("/createGroup", verifyToken, isGroupAdmin, createGroup);
 
 // Route to get details of a specific group, including its users
 router.get("/:groupId", verifyToken, getGroupDetails);
 
 // Route to add a user to a group (Group Admins and Admins can add users)
-router.post("/add-user", verifyToken, isGroupAdmin, addUserToGroup);
+router.post("/add-user", verifyToken, isAdmin, addUserToGroup);
 
 // Route to remove a user from a group (Group Admins and Admins can remove users)
 router.post("/remove-user", verifyToken, isGroupAdmin, removeUserFromGroup);
