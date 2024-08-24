@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  assignRole,
   deleteUser,
   getUserDetails,
   getUsers,
@@ -8,7 +9,7 @@ import {
   test,
   updateUser,
 } from "../controllers/user.controller.js";
-import { verifyToken } from "../utils/verifyUser.js";
+import { isAdmin, verifyToken } from "../utils/verifyUser.js";
 
 const router = express.Router();
 
@@ -23,5 +24,7 @@ router.get(
   verifyToken,
   getUsersGroupedAndUngrouped
 );
+
+router.post("/assignRole", verifyToken, isAdmin, assignRole);
 
 export default router;

@@ -51,6 +51,10 @@ const surveySchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    group: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Group",
+    },
   },
   { timestamps: true }
 );

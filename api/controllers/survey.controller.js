@@ -56,16 +56,43 @@ export const surveyQuestion = async (req, res, next) => {
 };
 
 // Fetch surveys with optional filtering
+// Fetch surveys with optional filtering based on user role
 export const getSurveys = async (req, res, next) => {
   const { userId } = req.query; // Get userId from query parameters if provided
+  const { role } = req.user; // User role from req.user, set by middleware
 
   try {
-    const query = userId ? { user: userId } : {}; // Filter by userId if provided
+    let query = {};
+
+    if (role === "Admin") {
+      // Admin can see all surveys
+      query = {};
+    } else if (role === "Group Admin") {
+      // Group Admin can see surveys of users in their group
+      const user = await User.findById(req.user.id); // Find the logged-in user
+      if (!user) {
+        return next(errorHandler(400, "User not found."));
+      }
+
+      const groupUsers = await User.find({ group: user.group }); // Find users in the same group
+      const groupUserIds = groupUsers.map((user) => user._id); // Extract user IDs
+
+      query.user = { $in: groupUserIds }; // Filter surveys by users in the same group
+    } else if (role === "Normal User") {
+      // Normal User can see only their own surveys
+      if (!userId) {
+        return next(errorHandler(400, "User ID is required for Normal User."));
+      }
+      query.user = userId; // Filter surveys by the provided userId
+    } else {
+      // If role is unrecognized, return an error
+      return res.status(403).json({ error: "Access denied" });
+    }
 
     // Retrieve surveys and include surveyUsername
     const surveys = await Survey.find(query).populate("user", "surveyUsername");
 
-    const totalSurvey = await Survey.countDocuments(query); // Count total surveys based on query
+    const totalSurvey = await Survey.countDocuments(query);
 
     const now = new Date();
     const oneMonthAgo = new Date(
