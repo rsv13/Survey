@@ -55,7 +55,6 @@ export const surveyQuestion = async (req, res, next) => {
   }
 };
 
-// Fetch surveys with optional filtering
 // Fetch surveys with optional filtering based on user role
 export const getSurveys = async (req, res, next) => {
   const { userId } = req.query; // Get userId from query parameters if provided

@@ -250,35 +250,30 @@ export const assignRole = async (req, res, next) => {
         return next(errorHandler(404, "Group not found"));
       }
 
-      // Check if the user is already an admin of this group
       if (group.admins.includes(userId)) {
         return next(
           errorHandler(400, "User is already an admin of this group")
         );
       }
 
-      // Assign the user as a Group Admin
       user.role = role;
       user.groupId = groupId;
       await user.save();
 
-      // Add the user to the group's admins array if not already there
       group.admins.push(userId);
       await group.save();
     } else if (role === "Admin" || role === "normalUser") {
-      // Reset user's group association if role is changing
-      user.role = role;
       if (user.groupId) {
         const group = await Group.findById(user.groupId);
         if (group) {
-          // Remove the user from the group's admins array if they were a Group Admin
           group.admins = group.admins.filter(
             (adminId) => adminId.toString() !== userId
           );
           await group.save();
         }
-        user.groupId = null; // Clear user's groupId if they are no longer a Group Admin
+        user.groupId = null;
       }
+      user.role = role;
       await user.save();
     } else {
       return next(errorHandler(400, "Invalid role assignment"));

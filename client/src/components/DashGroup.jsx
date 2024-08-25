@@ -14,11 +14,13 @@ export default function DashGroups() {
   const [groupIdToDelete, setGroupIdToDelete] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Fetch groups from the server
+  // Fetch groups based on user role
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        let url = '/api/group/allGroup';
+        let url = '/api/group/allGroup'; // Default URL for Admins and Group Admins
+
+        // Adjust URL based on user role
         if (currentUser.role === 'Group Admin') {
           url = '/api/group/group-admin/groups'; // URL for Group Admins
         }
@@ -36,8 +38,9 @@ export default function DashGroups() {
         }
 
         const data = await res.json();
+        console.log('Fetched groups data:', data);
 
-        const groupsData = data.groups || data;
+        const groupsData = data.groups || data; // Ensure response consistency
         setGroups(groupsData);
         setFilteredGroups(groupsData);
       } catch (error) {
@@ -46,7 +49,7 @@ export default function DashGroups() {
     };
 
     fetchGroups();
-  }, [currentUser]);
+  }, [currentUser.role, currentUser.token]); // Re-fetch groups when role or token changes
 
   // Filter groups based on search query
   useEffect(() => {
@@ -116,7 +119,7 @@ export default function DashGroups() {
                 <Table.HeadCell>Group Name</Table.HeadCell>
                 <Table.HeadCell>Description</Table.HeadCell>
                 <Table.HeadCell>No. of Users</Table.HeadCell>
-                {(currentUser.role === 'Admin' || currentUser.role === 'Group Admin') && (
+                {currentUser.role !== 'User' && ( // Only show actions if user is Admin or Group Admin
                   <Table.HeadCell>Actions</Table.HeadCell>
                 )}
               </Table.Head>
@@ -127,7 +130,7 @@ export default function DashGroups() {
                     <Table.Cell>{group.name || 'N/A'}</Table.Cell>
                     <Table.Cell>{group.description || 'N/A'}</Table.Cell>
                     <Table.Cell>{group.members.length || 0}</Table.Cell>
-                    {(currentUser.role === 'Admin' || currentUser.role === 'Group Admin') && (
+                    {currentUser.role !== 'User' && ( // Only show actions if user is Admin or Group Admin
                       <Table.Cell>
                         <div className='flex space-x-2'>
                           <Button onClick={() => handleViewDetails(group._id)} gradientMonochrome="info">

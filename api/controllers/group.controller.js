@@ -28,6 +28,7 @@ export const createGroup = async (req, res, next) => {
   }
 
   try {
+    // Create a new group with the user as an admin
     const newGroup = new Group({
       name,
       description,
@@ -36,7 +37,21 @@ export const createGroup = async (req, res, next) => {
       members: [],
     });
 
+    // Save the new group
     await newGroup.save();
+
+    // If the user is a Group Admin, find other Group Admins to add them to the group's admins list
+    if (req.user.role === "Group Admin") {
+      const allGroupAdmins = await Group.find({ admins: req.user.id });
+      for (const group of allGroupAdmins) {
+        if (!group.admins.includes(req.user.id)) {
+          group.admins.push(req.user.id);
+          await group.save();
+        }
+      }
+    }
+
+    // Respond with the newly created group
     res.status(201).json(newGroup);
   } catch (error) {
     next(error);
@@ -159,19 +174,24 @@ export const deleteGroup = async (req, res, next) => {
 // Controller function to get all groups (for Admin)
 export const getAdminGroups = async (req, res, next) => {
   try {
-    const groups = await Group.find({}).populate("members createdBy admins");
+    const groups = await Group.find({ admins: req.user.id }).populate(
+      "members createdBy admins"
+    );
     res.status(200).json(groups);
   } catch (error) {
     next(error);
   }
 };
 
-// Controller function to get groups created by the Group Admin
+// Controller function to get groups where the user is either the creator or an admin
+// Controller function to get groups where the user is either the creator or an admin
 export const getAdminGroupCluster = async (req, res, next) => {
   try {
-    const groups = await Group.find({ createdBy: req.user.id }).populate(
-      "members createdBy admins"
-    );
+    // Find groups where the user is either the creator or an admin
+    const groups = await Group.find({
+      $or: [{ createdBy: req.user.id }, { admins: req.user.id }],
+    }).populate("members createdBy admins");
+
     res.status(200).json(groups);
   } catch (error) {
     next(error);

@@ -133,7 +133,6 @@ export default function DashSurveys() {
             <Table.Head>
               <Table.HeadCell>Date Updated</Table.HeadCell>
               <Table.HeadCell>Survey Username</Table.HeadCell>
-              <Table.HeadCell>Group Name</Table.HeadCell>
               <Table.HeadCell>Gender</Table.HeadCell>
               <Table.HeadCell>Age Group</Table.HeadCell>
               <Table.HeadCell>Profession</Table.HeadCell>
@@ -150,7 +149,6 @@ export default function DashSurveys() {
                 >
                   <Table.Cell>{formatDate(new Date(survey.updatedAt).toLocaleDateString())}</Table.Cell>
                   <Table.Cell>{survey.surveyUsername || 'N/A'}</Table.Cell>
-                  <Table.Cell>{survey.groupName || 'N/A'}</Table.Cell>
                   <Table.Cell>{survey.gender || 'N/A'}</Table.Cell>
                   <Table.Cell>{survey.ageGroup || 'N/A'}</Table.Cell>
                   <Table.Cell>{survey.profession || 'N/A'}</Table.Cell>
@@ -163,7 +161,7 @@ export default function DashSurveys() {
                     ].join(', ')}
                   </Table.Cell>
                   <Table.Cell>
-                    <Button gradientMonochrome="info" onClick={() => handleViewClick(survey)}>View</Button>
+                    <Button gradientMonochrome="info"onClick={() => handleViewClick(survey)}>View</Button>
                   </Table.Cell>
                   {currentUser?.isAdmin && (
                     <Table.Cell>
