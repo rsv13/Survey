@@ -2,23 +2,25 @@ import { Alert, Button, Checkbox, Label, Radio, Select, TextInput } from 'flowbi
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { surveyInputs } from '../../../api/utils/surveyInputs';
 
 const SurveyForm = () => {
   const { currentUser } = useSelector(state => state.user);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    surveyUsername: currentUser.surveyUsername || '', // Ensure it is a string
+    surveyUsername: currentUser.surveyUsername || '', // Ensure default is string
     gender: '',
     ageGroup: '',
-    profession: '',
+    sector: '', 
+    designation: '', 
     education: '',
     country: '',
     state: '',
     city: '',
     consent: false,
   });
-  const [surveyAnswers, setSurveyAnswers] = useState(Array(14).fill(null));
+  const [surveyAnswers, setSurveyAnswers] = useState(Array(surveyInputs.questions.length).fill(null));
   const [unansweredQuestions, setUnansweredQuestions] = useState([]);
   const [showSurvey, setShowSurvey] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -30,15 +32,16 @@ const SurveyForm = () => {
       surveyUsername: currentUser.surveyUsername || '', // Ensure default is string
       gender: '',
       ageGroup: '',
-      profession: '',
+      sector: '',
+      designation: '',
       education: '',
       country: '',
       state: '',
       city: '',
       consent: false,
     });
-    setSurveyAnswers(Array(14).fill(null));
-    setUnansweredQuestions(Array.from(Array(14).keys()));
+    setSurveyAnswers(Array(surveyInputs.questions.length).fill(null));
+    setUnansweredQuestions(Array.from(Array(surveyInputs.questions.length).keys()));
     setShowSurvey(false);
     setSubmitted(false);
     setError(null);
@@ -69,7 +72,7 @@ const SurveyForm = () => {
       setError('You must consent to use data for research and educational purposes.');
       return;
     }
-    if (!formData.gender || !formData.ageGroup || !formData.profession || !formData.education || !formData.country || !formData.state || !formData.city) {
+    if (!formData.gender || !formData.ageGroup || !formData.sector || !formData.designation || !formData.education || !formData.country || !formData.state || !formData.city) {
       setError('Please fill out all fields.');
       return;
     }
@@ -139,11 +142,6 @@ const SurveyForm = () => {
   return (
     <div className='min-h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-800'>
       <div className='max-w-4xl w-full p-8 bg-white dark:bg-gray-700 shadow-lg rounded-lg'>
-        {(!showSurvey && error) && (
-          <Alert color='failure' className='mb-4'>
-            {error}
-          </Alert>
-        )}
         {!showSurvey ? (
           <form className='space-y-6' onSubmit={handleSubmit}>
             <h1 className='text-3xl font-semibold text-center text-gray-800 dark:text-gray-200 mb-6'>
@@ -162,46 +160,48 @@ const SurveyForm = () => {
               />
             </div>
             <div>
-              <Label htmlFor='gender' value='Gender' />
+              <Label htmlFor='gender' value='Gender:' />
               <Select id='gender' value={formData.gender} onChange={handleFormChange}>
                 <option value=''>Select...</option>
-                <option value='Male'>Male</option>
-                <option value='Female'>Female</option>
-                <option value='Prefer not to say'>Prefer not to say</option>
-                <option value='Others'>Others</option>
+                {surveyInputs.fields.gender.map(option => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
               </Select>
             </div>
             <div>
-              <Label htmlFor='ageGroup' value='Age Group' />
+              <Label htmlFor='ageGroup' value='Age Group:' />
               <Select id='ageGroup' value={formData.ageGroup} onChange={handleFormChange}>
                 <option value=''>Select...</option>
-                <option value='16 to 24'>16 to 24</option>
-                <option value='25 to 34'>25 to 34</option>
-                <option value='35 to 44'>35 to 44</option>
-                <option value='45 to 54'>45 to 54</option>
-                <option value='55 & above'>55 & above</option>
+                {surveyInputs.fields.ageGroup.map(option => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
               </Select>
             </div>
             <div>
-              <Label htmlFor='profession' value='Profession' />
-              <Select id='profession' value={formData.profession} onChange={handleFormChange}>
+              <Label htmlFor='sector' value='Your sector of work:' />
+              <Select id='sector' value={formData.sector} onChange={handleFormChange}>
                 <option value=''>Select...</option>
-                <option value='Software Developer'>Software Developer</option>
-                <option value='Teacher'>Teacher</option>
-                <option value='Engineer'>Engineer</option>
-                <option value='Doctor'>Doctor</option>
-                <option value='Other'>Other</option>
+                {surveyInputs.fields.sector.map(option => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
               </Select>
+            </div>
+            <div>
+              <Label htmlFor='designation' value='Designation' />
+              <TextInput
+                id='designation'
+                value={formData.designation}
+                onChange={handleFormChange}
+                placeholder='Enter your designation'
+              />
             </div>
             <div>
               <Label htmlFor='education' value='Education' />
               <Select id='education' value={formData.education} onChange={handleFormChange}>
                 <option value=''>Select...</option>
-                <option value='High School'>High School</option>
-                <option value="Associate's Degree">Associate's Degree</option>
-                <option value="Bachelor's Degree">Bachelor's Degree</option>
-                <option value="Master's Degree">Master's Degree</option>
-                <option value='Doctorate'>Doctorate</option>
+                {surveyInputs.fields.education.map(option => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
               </Select>
             </div>
             <div>
@@ -241,28 +241,13 @@ const SurveyForm = () => {
             <h1 className='text-3xl font-semibold text-center text-gray-800 dark:text-gray-200 mb-6'>
               Survey Questions
             </h1>
-            {[
-              "I’ve been living in a safe and healthy home environment",
-              "I’ve been able to enjoy a safe and healthy environment outside my home",
-              "I’ve been financially secure and so have had enough income to meet my needs",
-              "I’ve been doing worthwhile activities (paid/unpaid) when I’ve wanted",
-              "I’ve been able to carry out what I’ve set out to do when I’ve wanted",
-              "I’ve met up with family and friends and we have done things together when I’ve wanted",
-              "I've been free from harassment and discrimination",
-              "I’ve been able to use local services and facilities when I’ve needed",
-              "I’ve felt useful when I help and support other people",
-              "I’ve had my opinions taken seriously",
-              "I’ve interacted with others in person when I’ve wanted",
-              "I’ve interacted with others digitally, online and/or using a phone when I’ve wanted",
-              "I've been involved with community groups and/or activities when I’ve wanted",
-              "I’ve learnt about the world",
-            ].map((question, index) => (
+            {surveyInputs.questions.map((question, index) => (
               <div key={index} className={`border p-4 mb-4 rounded-lg ${unansweredQuestions.includes(index) ? 'border-red-500' : 'border-gray-300'}`}>
                 <p className='text-lg font-medium text-gray-700 dark:text-gray-300 mb-2'>
                   Question {index + 1}: {question}
                 </p>
                 <div className='flex flex-wrap gap-4'>
-                  {['None of the time', 'Rarely', 'Some of the time', 'Often', 'All of the time'].map((option, i) => (
+                  {surveyInputs.options.map((option, i) => (
                     <div key={i} className='flex items-center'>
                       <Radio
                         id={`q${index}-opt${i}`}

@@ -10,7 +10,11 @@ const surveySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    profession: {
+    sector: {
+      type: String,
+      required: true,
+    },
+    designation: {
       type: String,
       required: true,
     },
