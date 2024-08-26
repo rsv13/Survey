@@ -5,7 +5,7 @@ import { errorHandler } from "../utils/error.js";
 // Function to get all available groups (accessible by anyone with a valid token)
 export const getAllGroups = async (req, res) => {
   try {
-    const groups = await Group.find({});
+    const groups = await Group.find({}).populate("admins members createdBy");
     res.status(200).json(groups);
   } catch (error) {
     res
@@ -63,7 +63,9 @@ export const getGroupDetails = async (req, res, next) => {
   const { groupId } = req.params;
 
   try {
-    const group = await Group.findById(groupId).populate("members");
+    const group = await Group.findById(groupId).populate(
+      "admins members createdBy"
+    );
     if (!group) {
       return next(errorHandler(404, "Group not found"));
     }
@@ -71,10 +73,10 @@ export const getGroupDetails = async (req, res, next) => {
     // Check if the user has access
     if (
       req.user?.role === "Group Admin" &&
-      group.createdBy?.toString() !== req.user._id?.toString() &&
+      group.createdBy.toString() !== req.user.id.toString() &&
       !group.admins
-        ?.map((admin) => admin.toString())
-        .includes(req.user._id?.toString())
+        .map((admin) => admin.toString())
+        .includes(req.user.id.toString())
     ) {
       return next(errorHandler(403, "Access denied"));
     }
@@ -108,6 +110,10 @@ export const addUserToGroup = async (req, res, next) => {
 
     if (user.groupId && user.groupId.toString() !== groupId) {
       return next(errorHandler(400, "User is already in another group"));
+    }
+
+    if (group.members.includes(userId)) {
+      return next(errorHandler(400, "User is already a member of this group"));
     }
 
     user.groupId = groupId;
@@ -183,7 +189,6 @@ export const getAdminGroups = async (req, res, next) => {
   }
 };
 
-// Controller function to get groups where the user is either the creator or an admin
 // Controller function to get groups where the user is either the creator or an admin
 export const getAdminGroupCluster = async (req, res, next) => {
   try {

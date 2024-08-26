@@ -1,3 +1,4 @@
+// DashGroups.jsx
 import { Button, Modal, Table, TextInput } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
 import { AiOutlineSearch } from 'react-icons/ai';
@@ -93,8 +94,8 @@ export default function DashGroups() {
   };
 
   // Handle view details button click
-  const handleViewDetails = (groupId) => {
-    navigate('/group-details', { state: { groupId } });
+  const handleViewDetails = (group) => {
+    navigate('/group-details', { state: { group } }); // Pass entire group object
   };
 
   return (
@@ -133,7 +134,7 @@ export default function DashGroups() {
                     {currentUser.role !== 'User' && ( // Only show actions if user is Admin or Group Admin
                       <Table.Cell>
                         <div className='flex space-x-2'>
-                          <Button onClick={() => handleViewDetails(group._id)} gradientMonochrome="info">
+                          <Button onClick={() => handleViewDetails(group)} gradientMonochrome="info">
                             View Details
                           </Button>
                           {currentUser.role === 'Admin' && (

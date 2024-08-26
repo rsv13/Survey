@@ -152,6 +152,7 @@ export default function DashUserOverview() {
                   <Table.HeadCell>Created At</Table.HeadCell>
                   <Table.HeadCell>Username</Table.HeadCell>
                   <Table.HeadCell>Email</Table.HeadCell>
+                  <Table.HeadCell>User Role</Table.HeadCell>
                   <Table.HeadCell>Group Name</Table.HeadCell>
                   <Table.HeadCell>Group Description</Table.HeadCell>
                   <Table.HeadCell>Actions</Table.HeadCell>
@@ -165,6 +166,7 @@ export default function DashUserOverview() {
                       <Table.Cell>{new Date(user.createdAt).toLocaleDateString()}</Table.Cell>
                       <Table.Cell>{user.surveyUsername || 'N/A'}</Table.Cell>
                       <Table.Cell>{user.email || 'N/A'}</Table.Cell>
+                      <Table.Cell>{user.user?.role || 'N/A'} </Table.Cell>
                       <Table.Cell>{user.groupId?.name || 'No Group'}</Table.Cell>
                       <Table.Cell>{user.groupId?.description || 'No Description'}</Table.Cell>
                       <Table.Cell>
