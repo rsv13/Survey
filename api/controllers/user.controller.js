@@ -196,17 +196,27 @@ export const deleteGroup = async (req, res, next) => {
 export const getUserDetails = async (req, res) => {
   try {
     // Retrieve the user from the database and populate the group details
-    const user = await User.findById(req.user.id).populate("group");
+    const user = await User.findById(req.user.id)
+      .populate("groupId", "name") // Make sure to populate the groupId field
+      .exec();
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+
+    // Get groups where the user is an admin (if any)
+    const adminGroups = await Group.find({ admins: user._id })
+      .select("name")
+      .exec();
 
     // Return the user details along with group information
     res.status(200).json({
       username: user.username,
       email: user.email,
       role: user.role,
-      group: user.group, // This will include group details
+      groupName: user.groupId ? user.groupId.name : null,
+      adminGroups: adminGroups.map((group) => group.name),
+      profilePicture: user.profilePicture,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });

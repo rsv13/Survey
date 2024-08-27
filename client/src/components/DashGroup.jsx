@@ -14,13 +14,11 @@ export default function DashGroups() {
   const [groupIdToDelete, setGroupIdToDelete] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Fetch groups based on user role
   useEffect(() => {
     const fetchGroups = async () => {
       try {
         let url = '/api/group/allGroup'; // Default URL for Admins and Group Admins
 
-        // Adjust URL based on user role
         if (currentUser.role === 'Group Admin') {
           url = '/api/group/group-admin/groups'; // URL for Group Admins
         }
@@ -38,7 +36,6 @@ export default function DashGroups() {
         }
 
         const data = await res.json();
-
         const groupsData = data.groups || data; // Ensure response consistency
         setGroups(groupsData);
         setFilteredGroups(groupsData);
@@ -48,9 +45,8 @@ export default function DashGroups() {
     };
 
     fetchGroups();
-  }, [currentUser.role, currentUser.token]); // Re-fetch groups when role or token changes
+  }, [currentUser.role, currentUser.token]);
 
-  // Filter groups based on search query
   useEffect(() => {
     if (searchQuery) {
       setFilteredGroups(
@@ -63,13 +59,12 @@ export default function DashGroups() {
     }
   }, [searchQuery, groups]);
 
-  // Handle group deletion
   const handleDeleteGroup = async () => {
     try {
       const res = await fetch(`/api/group/${groupIdToDelete}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${currentUser.token}`, // Include token in headers
+          'Authorization': `Bearer ${currentUser.token}`,
         },
       });
 
@@ -82,7 +77,6 @@ export default function DashGroups() {
       const data = await res.json();
       console.log('Delete response data:', data);
 
-      // Update state after deletion
       setGroups(prev => prev.filter(group => group._id !== groupIdToDelete));
       setFilteredGroups(prev => prev.filter(group => group._id !== groupIdToDelete));
       setShowDeleteModal(false);
@@ -91,9 +85,8 @@ export default function DashGroups() {
     }
   };
 
-  // Handle view details button click
   const handleViewDetails = (group) => {
-    navigate('/group-details', { state: { group } }); // Pass entire group object
+    navigate('/group-details', { state: { group } });
   };
 
   return (
@@ -118,8 +111,8 @@ export default function DashGroups() {
                 <Table.HeadCell>Group Name</Table.HeadCell>
                 <Table.HeadCell>Description</Table.HeadCell>
                 <Table.HeadCell>No. of Users</Table.HeadCell>
-                <Table.HeadCell>Invite Code</Table.HeadCell> {/* New Column for Invite Code */}
-                {currentUser.role !== 'User' && ( // Only show actions if user is Admin or Group Admin
+                <Table.HeadCell>Invite Code</Table.HeadCell>
+                {currentUser.role !== 'User' && (
                   <Table.HeadCell>Actions</Table.HeadCell>
                 )}
               </Table.Head>
@@ -130,8 +123,8 @@ export default function DashGroups() {
                     <Table.Cell>{group.name || 'N/A'}</Table.Cell>
                     <Table.Cell>{group.description || 'N/A'}</Table.Cell>
                     <Table.Cell>{group.members.length || 0}</Table.Cell>
-                    <Table.Cell>{group.inviteCode || 'N/A'}</Table.Cell> {/* Display the Invite Code */}
-                    {currentUser.role !== 'User' && ( // Only show actions if user is Admin or Group Admin
+                    <Table.Cell>{group.inviteCode || 'N/A'}</Table.Cell>
+                    {currentUser.role !== 'User' && (
                       <Table.Cell>
                         <div className='flex space-x-2'>
                           <Button onClick={() => handleViewDetails(group)} gradientMonochrome="info">
