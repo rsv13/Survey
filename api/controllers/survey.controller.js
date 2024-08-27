@@ -60,11 +60,6 @@ export const getSurveys = async (req, res, next) => {
   const { userId } = req.query; // Get userId from query parameters if provided
   const { role, id } = req.user; // Destructure user role and id from req.user
 
-  // Debugging logs to check user role and ID
-  console.log("req.user:", req.user);
-  console.log("User Role:", role);
-  console.log("User ID:", id);
-
   try {
     let query = {};
 
