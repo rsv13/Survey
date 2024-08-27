@@ -36,6 +36,7 @@ export default function Results() {
           <p className='text-lg font-semibold text-blue-800 dark:text-blue-800 mb-4'>
             Remember, no matter how strong or positive you may feel, it's okay to ask for help if you're struggling mentally or emotionally. Reaching out is a sign of strength. Whether it's talking to a friend, family member, or a professional, support is always available. You deserve to be heard and supported, so never hesitate to seek help when you need it.
           </p>
+ 
         </div>
 
 
@@ -48,13 +49,11 @@ export default function Results() {
             {getInsight()}
           </p>
 
-          {score <= 45 && (
           <div className='bg-yellow-200 dark:bg-yellow-300 p-6 rounded-lg shadow-md mb-6'>
             <p className='text-lg font-semibold text-yellow-800 dark:text-yellow-800'>
-              If you are not feeling well, we encourage you to reach out to your nearest local healthcare provider for support. You can also explore the following resources for additional help and guidance:
+            If you have concerns for your wellbeing, please contact your local wellbeing service provider for example social prescribing practitioner, wellbeing coordinator, community connector  or support worker. 
             </p>
           </div>
-        )}
 
           <div className="grid md:grid-cols-2 gap-8">
             <div className='p-6 rounded-lg shadow-md border-4 border-blue-500 bg-blue-50 dark:bg-blue-900'>
