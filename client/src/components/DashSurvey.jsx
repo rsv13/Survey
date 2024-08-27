@@ -32,7 +32,7 @@ export default function DashSurveys() {
   
       if (currentUser.role === 'Admin' || currentUser.role === 'Group Admin') {
         url = '/api/survey/getSurveys';
-      } else if (currentUser.role === 'Normal User') {
+      } else if (currentUser.role === 'normalUser') {
         url = `/api/survey/getSurveys?userId=${currentUser._id}`;
       } else {
         console.error("Access denied: Unrecognized role.");

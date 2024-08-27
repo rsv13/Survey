@@ -60,6 +60,11 @@ export const getSurveys = async (req, res, next) => {
   const { userId } = req.query; // Get userId from query parameters if provided
   const { role, id } = req.user; // Destructure user role and id from req.user
 
+  // Debugging logs to check user role and ID
+  console.log("req.user:", req.user);
+  console.log("User Role:", role);
+  console.log("User ID:", id);
+
   try {
     let query = {};
 
@@ -88,6 +93,10 @@ export const getSurveys = async (req, res, next) => {
       query.user = { $in: groupUserIds.map((user) => user._id) }; // Filter surveys by users in the same group
     } else if (role === "normalUser") {
       // Normal User can see only their own surveys
+      console.log("Role:", role);
+      console.log("User ID from req.user:", id);
+      console.log("User ID from query:", userId);
+
       if (!userId) {
         return next(errorHandler(400, "User ID is required for Normal User."));
       }
@@ -98,8 +107,11 @@ export const getSurveys = async (req, res, next) => {
       }
 
       query.user = userId; // Filter surveys by the provided userId
+
+      console.log("Constructed query for normalUser:", query);
     } else {
       // If role is unrecognized, return an error
+      console.log("Unrecognized role:", role); // Log unrecognized role
       return res
         .status(403)
         .json({ error: "Access denied: Unrecognized role." });
@@ -107,7 +119,6 @@ export const getSurveys = async (req, res, next) => {
 
     // Retrieve surveys and include surveyUsername
     const surveys = await Survey.find(query).populate("user", "surveyUsername");
-
     const totalSurvey = await Survey.countDocuments(query);
 
     const now = new Date();
@@ -128,6 +139,7 @@ export const getSurveys = async (req, res, next) => {
       lastMonthSurvey,
     });
   } catch (error) {
+    console.error("Error in getSurveys:", error.message);
     next(error);
   }
 };
