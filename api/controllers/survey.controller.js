@@ -92,11 +92,6 @@ export const getSurveys = async (req, res, next) => {
 
       query.user = { $in: groupUserIds.map((user) => user._id) }; // Filter surveys by users in the same group
     } else if (role === "normalUser") {
-      // Normal User can see only their own surveys
-      console.log("Role:", role);
-      console.log("User ID from req.user:", id);
-      console.log("User ID from query:", userId);
-
       if (!userId) {
         return next(errorHandler(400, "User ID is required for Normal User."));
       }
