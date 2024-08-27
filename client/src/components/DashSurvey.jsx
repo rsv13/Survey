@@ -26,28 +26,38 @@ export default function DashSurveys() {
       console.error("Current user is not available.");
       return;
     }
-
+  
     try {
-      const url = currentUser.isAdmin
-        ? '/api/survey/getSurveys'
-        : `/api/survey/getSurveys?userId=${currentUser._id}`;
-
-      const res = await fetch(url);
+      let url;
+  
+      if (currentUser.role === 'Admin' || currentUser.role === 'Group Admin') {
+        url = '/api/survey/getSurveys';
+      } else if (currentUser.role === 'Normal User') {
+        url = `/api/survey/getSurveys?userId=${currentUser._id}`;
+      } else {
+        console.error("Access denied: Unrecognized role.");
+        return;
+      }
+  
+      const res = await fetch(url, {
+        method: 'GET',
+        credentials: 'include',
+      });
       const data = await res.json();
-
+  
       if (res.ok) {
-        // Sort surveys by updatedAt in descending order
         const sortedSurveys = data.surveys.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
         setUserSurveys(sortedSurveys);
-        setFilteredSurveys(sortedSurveys); // Initialize filteredSurveys
+        setFilteredSurveys(sortedSurveys);
       } else {
-        console.error("Failed to fetch surveys:", data.message || res.statusText);
+        alert("Failed to fetch surveys. " + (data.message || res.statusText));
       }
     } catch (error) {
-      console.error("Error fetching surveys:", error.message);
+      alert("Error fetching surveys: " + error.message);
     }
   };
-
+  
+  
   // Filter surveys based on search query
   useEffect(() => {
     const query = searchQuery.toLowerCase();
@@ -87,6 +97,7 @@ export default function DashSurveys() {
     try {
       const res = await fetch(`/api/survey/deleteSurvey/${selectedSurveyId}`, {
         method: 'DELETE',
+        credentials: 'include', // Include cookies with the request
       });
       const data = await res.json();
 
@@ -135,7 +146,8 @@ export default function DashSurveys() {
               <Table.HeadCell>Survey Username</Table.HeadCell>
               <Table.HeadCell>Gender</Table.HeadCell>
               <Table.HeadCell>Age Group</Table.HeadCell>
-              <Table.HeadCell>Profession</Table.HeadCell>
+              <Table.HeadCell>Sector</Table.HeadCell>
+              <Table.HeadCell>Designation</Table.HeadCell>
               <Table.HeadCell>Education</Table.HeadCell>
               <Table.HeadCell>Place</Table.HeadCell>
               <Table.HeadCell>View</Table.HeadCell>
@@ -151,7 +163,8 @@ export default function DashSurveys() {
                   <Table.Cell>{survey.surveyUsername || 'N/A'}</Table.Cell>
                   <Table.Cell>{survey.gender || 'N/A'}</Table.Cell>
                   <Table.Cell>{survey.ageGroup || 'N/A'}</Table.Cell>
-                  <Table.Cell>{survey.profession || 'N/A'}</Table.Cell>
+                  <Table.Cell>{survey.sector || 'N/A'}</Table.Cell>
+                  <Table.Cell>{survey.designation || 'N/A'}</Table.Cell>
                   <Table.Cell>{survey.education || 'N/A'}</Table.Cell>
                   <Table.Cell>
                     {[
@@ -161,7 +174,7 @@ export default function DashSurveys() {
                     ].join(', ')}
                   </Table.Cell>
                   <Table.Cell>
-                    <Button gradientMonochrome="info"onClick={() => handleViewClick(survey)}>View</Button>
+                    <Button gradientMonochrome="info" onClick={() => handleViewClick(survey)}>View</Button>
                   </Table.Cell>
                   {currentUser?.isAdmin && (
                     <Table.Cell>

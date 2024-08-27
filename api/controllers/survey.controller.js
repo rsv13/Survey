@@ -58,7 +58,7 @@ export const surveyQuestion = async (req, res, next) => {
 // Fetch surveys with optional filtering based on user role
 export const getSurveys = async (req, res, next) => {
   const { userId } = req.query; // Get userId from query parameters if provided
-  const { role } = req.user; // User role from req.user, set by middleware
+  const { role, id } = req.user; // Destructure user role and id from req.user
 
   try {
     let query = {};
@@ -68,24 +68,41 @@ export const getSurveys = async (req, res, next) => {
       query = {};
     } else if (role === "Group Admin") {
       // Group Admin can see surveys of users in their group
-      const user = await User.findById(req.user.id); // Find the logged-in user
+      const user = await User.findById(id); // Find the logged-in user
       if (!user) {
         return next(errorHandler(400, "User not found."));
       }
 
-      const groupUsers = await User.find({ group: user.group }); // Find users in the same group
-      const groupUserIds = groupUsers.map((user) => user._id); // Extract user IDs
+      // Fetch only user IDs to optimize performance
+      const groupUserIds = await User.find({ groupId: user.groupId }).select(
+        "_id"
+      );
 
-      query.user = { $in: groupUserIds }; // Filter surveys by users in the same group
-    } else if (role === "Normal User") {
+      // Check if groupUserIds is empty
+      if (groupUserIds.length === 0) {
+        return res
+          .status(200)
+          .json({ surveys: [], totalSurvey: 0, lastMonthSurvey: 0 });
+      }
+
+      query.user = { $in: groupUserIds.map((user) => user._id) }; // Filter surveys by users in the same group
+    } else if (role === "normalUser") {
       // Normal User can see only their own surveys
       if (!userId) {
         return next(errorHandler(400, "User ID is required for Normal User."));
       }
+
+      // Validate that the userId is the current user's ID
+      if (userId !== id) {
+        return next(errorHandler(403, "Access denied: Unauthorized user."));
+      }
+
       query.user = userId; // Filter surveys by the provided userId
     } else {
       // If role is unrecognized, return an error
-      return res.status(403).json({ error: "Access denied" });
+      return res
+        .status(403)
+        .json({ error: "Access denied: Unrecognized role." });
     }
 
     // Retrieve surveys and include surveyUsername

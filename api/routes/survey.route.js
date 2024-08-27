@@ -4,12 +4,12 @@ import {
   surveyQuestion,
   surveyTest,
 } from "../controllers/survey.controller.js";
-import { isAdmin, verifyToken } from "../utils/verifyUser.js";
+import { verifyToken } from "../utils/verifyUser.js";
 
 const router = express.Router();
 
 router.get("/surveyTest", surveyTest);
 router.post("/surveyQuestion", surveyQuestion);
-router.get("/getSurveys", verifyToken, isAdmin, getSurveys);
+router.get("/getSurveys", verifyToken, getSurveys);
 
 export default router;
