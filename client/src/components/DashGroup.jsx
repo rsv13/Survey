@@ -39,7 +39,6 @@ export default function DashGroups() {
         }
 
         const data = await res.json();
-        console.log('Fetched groups data:', data);
 
         const groupsData = data.groups || data; // Ensure response consistency
         setGroups(groupsData);
