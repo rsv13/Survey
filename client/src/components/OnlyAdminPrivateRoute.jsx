@@ -8,6 +8,6 @@ export default function OnlyAdminPrivateRoute() {
     return (
         currentUser?.role === 'Admin' || currentUser?.role === 'Group Admin' 
             ? <Outlet /> 
-            : <Navigate to='/sign-in' />
+            : <Navigate to='/' />
     );
 }
