@@ -102,25 +102,36 @@ export default function DashUserOverview() {
 
   const handleConfirmAddUser = async () => {
     setShowConfirmModal(false);
-    
+  
+    console.log('Adding user to group:', { selectedGroupId, selectedUserId });
+  
+    // Check if groupId and userId are set
+    if (!selectedGroupId || !selectedUserId) {
+      setError('Please select both a user and a group before proceeding.');
+      return;
+    }
+  
     try {
       const res = await fetch('/api/group/add-user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ groupId: selectedGroupId, userId: selectedUserId }),
       });
-
+  
+      console.log('Response status:', res.status, res.statusText);
+  
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || 'Failed to add user to group');
       }
-
+  
       await fetchUsersData(); // Refresh data to reflect changes
     } catch (error) {
       console.error('Error adding user to group:', error.message);
-      setError('Failed to add user to group.');
+      setError(`Failed to add user to group. ${error.message}`);
     }
   };
+  
 
   return (
     <div className='p-6 bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center'>

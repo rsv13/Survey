@@ -91,6 +91,7 @@ export const getGroupDetails = async (req, res, next) => {
 export const addUserToGroup = async (req, res, next) => {
   const { groupId, userId } = req.body;
 
+  // Check if the requesting user has 'Admin' role
   if (req.user.role !== "Admin") {
     return next(
       errorHandler(403, "You are not allowed to add a user to a group")
@@ -98,34 +99,51 @@ export const addUserToGroup = async (req, res, next) => {
   }
 
   try {
+    // Find the group by ID
     const group = await Group.findById(groupId);
     if (!group) {
       return next(errorHandler(404, "Group not found"));
     }
 
+    // Find the user by ID
     const user = await User.findById(userId);
     if (!user) {
       return next(errorHandler(404, "User not found"));
     }
 
+    // Ensure 'surveyUsername' is present (required field)
+    if (!user.surveyUsername) {
+      return next(errorHandler(400, "User's survey username is required"));
+    }
+
+    // Ensure the user's role is one of the allowed values
+    if (!["normalUser", "Group Admin", "Admin"].includes(user.role)) {
+      return next(errorHandler(400, "Invalid user role"));
+    }
+
+    // Check if the user is already part of another group
     if (user.groupId && user.groupId.toString() !== groupId) {
       return next(errorHandler(400, "User is already in another group"));
     }
 
+    // Check if the user is already a member of the current group
     if (group.members.includes(userId)) {
       return next(errorHandler(400, "User is already a member of this group"));
     }
 
+    // Assign the groupId to the user and save
     user.groupId = groupId;
     await user.save();
 
+    // Add the user to the group's members array and save
     group.members.push(userId);
     await group.save();
 
+    // Respond with a success message
     res.status(200).json({ message: "User added to group" });
   } catch (error) {
     console.error("Error in addUserToGroup:", error);
-    next(error);
+    next(error); // Pass error to error handling middleware
   }
 };
 
