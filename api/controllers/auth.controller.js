@@ -4,6 +4,7 @@ import Counter from "../models/counter.model.js";
 import Group from "../models/group.model.js";
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
+import { generateInviteCode } from "../utils/inviteCode.js";
 
 // Function to get the next surveyUsername
 const getNextSurveyUsername = async () => {
@@ -18,83 +19,89 @@ const getNextSurveyUsername = async () => {
 
 // Sign up function
 export const signup = async (req, res) => {
-  try {
-    const {
-      username,
-      email,
-      password,
-      role,
-      groupName,
-      groupDescription,
-      groupId,
-    } = req.body;
+  const {
+    username,
+    email,
+    password,
+    role,
+    inviteCode,
+    groupName,
+    groupDescription,
+  } = req.body;
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+  try {
+    if (role === "normalUser") {
+      if (!username || !email || !password || !inviteCode) {
+        console.error("Signup error: Missing fields for normalUser");
+        return res.status(400).json({
+          message: "Please fill out all fields, including the invite code.",
+        });
+      }
+
+      const group = await Group.findOne({ inviteCode });
+      if (!group) {
+        console.error("Signup error: Invalid invite code");
+        return res.status(400).json({ message: "Invalid invite code" });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 12);
+      const surveyUsername = await getNextSurveyUsername(); // Generate surveyUsername
+
+      const user = new User({
+        username,
+        email,
+        password: hashedPassword,
+        role,
+        surveyUsername, 
+        groupId: group._id,
+      });
+
+      await user.save();
+      group.members.push(user._id);
+      await group.save();
+
+      return res
+        .status(201)
+        .json({ message: "User created and added to group successfully" });
     }
 
-    // Generate surveyUsername
-    const surveyUsername = await getNextSurveyUsername();
+    if (role === "Group Admin") {
+      if (!username || !email || !password || !groupName || !groupDescription) {
+        console.error("Signup error: Missing fields for Group Admin");
+        return res.status(400).json({ message: "Please fill out all fields." });
+      }
 
-    // Create new user
-    const hashedPassword = await bcrypt.hash(password, 12);
-    const newUser = new User({
-      username,
-      email,
-      password: hashedPassword,
-      role,
-      surveyUsername,
-      groupId: role === "Group Admin" ? null : groupId || null, // Handle groupId based on role
-    });
+      const hashedPassword = await bcrypt.hash(password, 12);
+      const surveyUsername = await getNextSurveyUsername(); // Generate surveyUsername
 
-    // Save user
-    await newUser.save();
+      const user = new User({
+        username,
+        email,
+        password: hashedPassword,
+        role,
+        surveyUsername, // Include surveyUsername
+      });
 
-    // Create group if role is Group Admin and group details are provided
-    if (role === "Group Admin" && groupName && groupDescription) {
+      await user.save();
+
       const newGroup = new Group({
         name: groupName,
         description: groupDescription,
-        createdBy: newUser._id, // Set the new user as the group creator/admin
-        admins: [newUser._id], // Add the new user as the group's admin
-        members: [], // No members initially
+        createdBy: user._id,
+        admins: [user._id],
+        members: [],
+        inviteCode: generateInviteCode(),
       });
 
       await newGroup.save();
 
-      // Update user's groupId
-      newUser.groupId = newGroup._id;
-      await newUser.save();
+      return res.status(201).json({
+        message: "Group created and Group Admin user added successfully",
+      });
     }
-
-    // Update the Group document if the user is a normalUser and has a groupId
-    if (role === "normalUser" && groupId) {
-      const group = await Group.findById(groupId);
-      if (group) {
-        group.members.push(newUser._id); // Add the user's ID to the members array
-        await group.save();
-      } else {
-        return res.status(404).json({ message: "Group not found" });
-      }
-    }
-
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: newUser._id, role: newUser.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    res.status(201).json({
-      message: "User created successfully",
-      token,
-      user: newUser,
-    });
   } catch (error) {
-    console.error("Signup Backend Error:", error); // Log the error to the server console
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("Signup error:", error);
+    res.status(500).json({ message: "An internal server error occurred" });
   }
 };
 

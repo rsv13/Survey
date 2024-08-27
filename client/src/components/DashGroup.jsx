@@ -1,4 +1,3 @@
-// DashGroups.jsx
 import { Button, Modal, Table, TextInput } from 'flowbite-react';
 import React, { useEffect, useState } from 'react';
 import { AiOutlineSearch } from 'react-icons/ai';
@@ -119,6 +118,7 @@ export default function DashGroups() {
                 <Table.HeadCell>Group Name</Table.HeadCell>
                 <Table.HeadCell>Description</Table.HeadCell>
                 <Table.HeadCell>No. of Users</Table.HeadCell>
+                <Table.HeadCell>Invite Code</Table.HeadCell> {/* New Column for Invite Code */}
                 {currentUser.role !== 'User' && ( // Only show actions if user is Admin or Group Admin
                   <Table.HeadCell>Actions</Table.HeadCell>
                 )}
@@ -130,6 +130,7 @@ export default function DashGroups() {
                     <Table.Cell>{group.name || 'N/A'}</Table.Cell>
                     <Table.Cell>{group.description || 'N/A'}</Table.Cell>
                     <Table.Cell>{group.members.length || 0}</Table.Cell>
+                    <Table.Cell>{group.inviteCode || 'N/A'}</Table.Cell> {/* Display the Invite Code */}
                     {currentUser.role !== 'User' && ( // Only show actions if user is Admin or Group Admin
                       <Table.Cell>
                         <div className='flex space-x-2'>

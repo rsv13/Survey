@@ -28,6 +28,11 @@ const groupSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    inviteCode: {
+      type: String,
+      required: true,
+      unique: true,
+    },
   },
   { timestamps: true }
 );

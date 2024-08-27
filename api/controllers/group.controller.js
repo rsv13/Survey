@@ -1,6 +1,7 @@
 import Group from "../models/group.model.js";
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
+import { generateInviteCode } from "../utils/inviteCode.js";
 
 // Function to get all available groups (accessible by anyone with a valid token)
 export const getAllGroups = async (req, res) => {
@@ -28,6 +29,8 @@ export const createGroup = async (req, res, next) => {
   }
 
   try {
+    const inviteCode = generateInviteCode(); //Creating an invite code for the user to join the group
+
     // Create a new group with the user as an admin
     const newGroup = new Group({
       name,
@@ -35,6 +38,7 @@ export const createGroup = async (req, res, next) => {
       createdBy: req.user.id,
       admins: [req.user.id],
       members: [],
+      inviteCode: inviteCode,
     });
 
     // Save the new group

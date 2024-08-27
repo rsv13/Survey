@@ -1,5 +1,5 @@
 import { Alert, Button, Label, Select, Spinner, TextInput, Textarea } from 'flowbite-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import OAuth from '../components/OAuth';
 
@@ -8,35 +8,15 @@ export default function SignUp() {
     username: '',
     email: '',
     password: '',
-    groupId: '',
+    groupCode: '', // New state for group code input
   });
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [groups, setGroups] = useState([]);
   const [role, setRole] = useState('normalUser'); // Default to normalUser
   const [groupName, setGroupName] = useState('');
   const [groupDescription, setGroupDescription] = useState('');
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const response = await fetch('/api/group/allGroup');
-        const data = await response.json();
-
-        if (Array.isArray(data)) {
-          setGroups(data); // Set groups directly as an array
-        } else {
-          setErrorMessage('Unexpected response format');
-        }
-      } catch (error) {
-        setErrorMessage('Failed to fetch groups');
-      }
-    };
-  
-    fetchGroups();
-  }, []);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -56,44 +36,44 @@ export default function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     // Validate required fields based on role
     if (role === 'normalUser') {
-      if (!formData.username || !formData.email || !formData.password) {
-        return setErrorMessage('Please fill out all fields');
+      if (!formData.username || !formData.email || !formData.password || !formData.groupCode) {
+        return setErrorMessage('Please fill out all fields, including the invite code.');
       }
     } else if (role === 'Group Admin') {
       if (!groupName || !groupDescription || !formData.username || !formData.email || !formData.password) {
-        return setErrorMessage('Please fill out all fields');
+        return setErrorMessage('Please fill out all fields.');
       }
     }
-
+  
     try {
       setLoading(true);
       setErrorMessage(null);
-
+  
       // Prepare payload for the API request
       const payload = {
         ...formData,
         role,
         groupName: role === 'Group Admin' ? groupName : undefined,
         groupDescription: role === 'Group Admin' ? groupDescription : undefined,
-        groupId: role === 'normalUser' ? formData.groupId || null : undefined,
+        inviteCode: role === 'normalUser' ? formData.groupCode : undefined, // Updated field name
       };
-
+  
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-
+  
       const data = await res.json();
       setLoading(false);
-
+  
       if (res.ok) {
         setErrorMessage(null);
         alert(data.message); // Show success message
-
+  
         navigate('/sign-in'); // Redirect to sign-in page
       } else {
         setErrorMessage(data.message || 'Signup failed. Please try again.');
@@ -103,6 +83,8 @@ export default function SignUp() {
       setLoading(false);
     }
   };
+  
+  
 
   return (
     <div className='min-h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-800'>
@@ -175,21 +157,8 @@ export default function SignUp() {
                 </div>
                 {role === 'normalUser' && (
                   <div className='mb-4'>
-                    <Label htmlFor='groupId' value='Select Group (Optional)' />
-                    <Select id='groupId' onChange={handleChange} value={formData.groupId || ''}>
-                      <option value=''>Select a group (optional)</option>
-                      {groups.length > 0 ? (
-                        groups.map((g) => (
-                          <option key={g._id} value={g._id}>
-                            {g.name}
-                          </option>
-                        ))
-                      ) : (
-                        <option value='' disabled>
-                          No groups available
-                        </option>
-                      )}
-                    </Select>
+                    <Label htmlFor='groupCode' value='Enter Group Code' /><span className='text-red-500'>*</span>
+                    <TextInput type='text' placeholder='Enter group code' id='groupCode' className='w-full' onChange={handleChange} />
                   </div>
                 )}
               </>

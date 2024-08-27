@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-
 export default function CreateGroup() {
   const { currentUser } = useSelector(state => state.user);
   const [formData, setFormData] = useState({ name: '', description: '' });
@@ -33,7 +32,7 @@ export default function CreateGroup() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData), // Send only name and description
       });
 
       const data = await res.json();
@@ -44,7 +43,7 @@ export default function CreateGroup() {
       }
 
       setPublishError(null);
-      navigate('/'); 
+      navigate('/dashboard?tab=groups'); // Navigate to the dashboard with 'groups' tab active
     } catch (error) {
       console.log(error.message);
       setPublishError('Something went wrong. Please try again.');
