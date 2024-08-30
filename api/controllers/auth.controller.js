@@ -18,7 +18,6 @@ const getNextSurveyUsername = async () => {
 };
 
 // Sign up function
-// Sign up function
 export const signup = async (req, res) => {
   const {
     username,
@@ -33,7 +32,6 @@ export const signup = async (req, res) => {
   try {
     if (role === "normalUser") {
       if (!username || !email || !password) {
-        console.error("Signup error: Missing fields for normalUser");
         return res.status(400).json({
           message: "Please fill out all fields.",
         });
@@ -45,17 +43,15 @@ export const signup = async (req, res) => {
       if (inviteCode) {
         const group = await Group.findOne({ inviteCode });
         if (!group) {
-          console.error("Signup error: Invalid invite code");
           return res.status(400).json({ message: "Invalid invite code" });
         }
         groupId = group._id;
-        group.members.push(user._id);
-        await group.save();
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
       const surveyUsername = await getNextSurveyUsername(); // Generate surveyUsername
 
+      // Create the user
       const user = new User({
         username,
         email,
@@ -67,18 +63,25 @@ export const signup = async (req, res) => {
 
       await user.save();
 
+      // If a group was found and the user was saved successfully, add user to group members
+      if (groupId) {
+        const group = await Group.findById(groupId);
+        group.members.push(user._id); // Now user._id is defined
+        await group.save();
+      }
+
       return res.status(201).json({ message: "User created successfully" });
     }
 
     if (role === "Group Admin") {
       if (!username || !email || !password || !groupName || !groupDescription) {
-        console.error("Signup error: Missing fields for Group Admin");
         return res.status(400).json({ message: "Please fill out all fields." });
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
       const surveyUsername = await getNextSurveyUsername(); // Generate surveyUsername
 
+      // Create the Group Admin user
       const user = new User({
         username,
         email,
@@ -89,6 +92,7 @@ export const signup = async (req, res) => {
 
       await user.save();
 
+      // Create a new group associated with the new Group Admin
       const newGroup = new Group({
         name: groupName,
         description: groupDescription,
@@ -105,7 +109,6 @@ export const signup = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Signup error:", error);
     res.status(500).json({ message: "An internal server error occurred" });
   }
 };

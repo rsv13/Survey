@@ -5,7 +5,7 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
 
 export default function DashGroupUsers() {
-  const { currentUser } = useSelector((state) => state.user); // Access currentUser from Redux
+  const { currentUser } = useSelector((state) => state.user); 
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
