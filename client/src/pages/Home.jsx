@@ -8,7 +8,7 @@ export default function HomePage() {
   const { theme } = useSelector((state) => state.theme);
 
   const handleSurveyClick = () => {
-    navigate('/survey');
+    navigate('/sign-up');
   };
 
   return (
