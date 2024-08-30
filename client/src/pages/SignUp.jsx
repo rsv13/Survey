@@ -8,7 +8,7 @@ export default function SignUp() {
     username: '',
     email: '',
     password: '',
-    groupCode: '', // New state for group code input
+    inviteCode: '', // Use the correct term inviteCode
   });
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -39,8 +39,8 @@ export default function SignUp() {
   
     // Validate required fields based on role
     if (role === 'normalUser') {
-      if (!formData.username || !formData.email || !formData.password || !formData.groupCode) {
-        return setErrorMessage('Please fill out all fields, including the invite code.');
+      if (!formData.username || !formData.email || !formData.password) {
+        return setErrorMessage('Please fill out all fields.');
       }
     } else if (role === 'Group Admin') {
       if (!groupName || !groupDescription || !formData.username || !formData.email || !formData.password) {
@@ -58,7 +58,7 @@ export default function SignUp() {
         role,
         groupName: role === 'Group Admin' ? groupName : undefined,
         groupDescription: role === 'Group Admin' ? groupDescription : undefined,
-        inviteCode: role === 'normalUser' ? formData.groupCode : undefined, // Updated field name
+        inviteCode: role === 'normalUser' && formData.inviteCode ? formData.inviteCode : undefined, // Use inviteCode
       };
   
       const res = await fetch('/api/auth/signup', {
@@ -84,8 +84,6 @@ export default function SignUp() {
     }
   };
   
-  
-
   return (
     <div className='min-h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-800'>
       <div className='max-w-4xl w-full p-8 bg-white dark:bg-gray-700 shadow-lg rounded-lg'>
@@ -157,8 +155,8 @@ export default function SignUp() {
                 </div>
                 {role === 'normalUser' && (
                   <div className='mb-4'>
-                    <Label htmlFor='groupCode' value='Enter Group Code' /><span className='text-red-500'>*</span>
-                    <TextInput type='text' placeholder='Enter group code' id='groupCode' className='w-full' onChange={handleChange} />
+                    <Label htmlFor='inviteCode' value='Enter Invite Code (optional)' />
+                    <TextInput type='text' placeholder='Enter invite code if you have one' id='inviteCode' className='w-full' onChange={handleChange} />
                   </div>
                 )}
               </>

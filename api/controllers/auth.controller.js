@@ -18,6 +18,7 @@ const getNextSurveyUsername = async () => {
 };
 
 // Sign up function
+// Sign up function
 export const signup = async (req, res) => {
   const {
     username,
@@ -31,17 +32,25 @@ export const signup = async (req, res) => {
 
   try {
     if (role === "normalUser") {
-      if (!username || !email || !password || !inviteCode) {
+      if (!username || !email || !password) {
         console.error("Signup error: Missing fields for normalUser");
         return res.status(400).json({
-          message: "Please fill out all fields, including the invite code.",
+          message: "Please fill out all fields.",
         });
       }
 
-      const group = await Group.findOne({ inviteCode });
-      if (!group) {
-        console.error("Signup error: Invalid invite code");
-        return res.status(400).json({ message: "Invalid invite code" });
+      let groupId = null;
+
+      // If inviteCode is provided, validate it
+      if (inviteCode) {
+        const group = await Group.findOne({ inviteCode });
+        if (!group) {
+          console.error("Signup error: Invalid invite code");
+          return res.status(400).json({ message: "Invalid invite code" });
+        }
+        groupId = group._id;
+        group.members.push(user._id);
+        await group.save();
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
@@ -52,17 +61,13 @@ export const signup = async (req, res) => {
         email,
         password: hashedPassword,
         role,
-        surveyUsername, 
-        groupId: group._id,
+        surveyUsername,
+        groupId, // groupId will be null if no valid inviteCode was provided
       });
 
       await user.save();
-      group.members.push(user._id);
-      await group.save();
 
-      return res
-        .status(201)
-        .json({ message: "User created and added to group successfully" });
+      return res.status(201).json({ message: "User created successfully" });
     }
 
     if (role === "Group Admin") {
