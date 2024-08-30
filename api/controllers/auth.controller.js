@@ -104,6 +104,10 @@ export const signup = async (req, res) => {
 
       await newGroup.save();
 
+      // Update the Group Admin's user document to include the groupId
+      user.groupId = newGroup._id;
+      await user.save();
+
       return res.status(201).json({
         message: "Group created and Group Admin user added successfully",
       });
