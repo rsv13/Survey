@@ -7,6 +7,8 @@ import { signInFailure, signInStart, signInSuccess } from '../redux/user/userSli
 
 export default function SignIn() {
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
   const [formData, setFormData] = useState({});
 
   const { loading, error: errorMessage} = useSelector(state => state.user);
@@ -24,7 +26,7 @@ export default function SignIn() {
     }
     try {
       dispatch(signInStart());
-      const res = await fetch('/api/auth/signin', {
+      const res = await fetch(`${API_URL}/api/auth/signin`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

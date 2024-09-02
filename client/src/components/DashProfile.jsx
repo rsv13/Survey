@@ -6,6 +6,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { deleteUserFailure, deleteUserStart, deleteUserSuccess, signoutSuccess } from '../redux/user/userSlice';
 
 export default function DashProfile() {
+
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { currentUser, error } = useSelector(state => state.user);
@@ -15,7 +18,7 @@ export default function DashProfile() {
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
-                const res = await fetch('/api/user/details', {
+                const res = await fetch(`${API_URL}/api/user/details`, {
                     headers: {
                         'Authorization': `Bearer ${currentUser?.token}` // Ensure token is included
                     }
@@ -41,7 +44,7 @@ export default function DashProfile() {
         setShowModal(false);
         try {
             dispatch(deleteUserStart());
-            const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+            const res = await fetch(`${API_URL}/api/user/delete/${currentUser._id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${currentUser.token}` // Ensure token is included
@@ -62,7 +65,7 @@ export default function DashProfile() {
 
     const handleSignout = async () => {
         try {
-            const res = await fetch('/api/user/signout', {
+            const res = await fetch(`${API_URL}/api/user/signout`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${currentUser?.token}` // Ensure token is included

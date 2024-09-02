@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { surveyInputs } from '../../../api/utils/surveyInputs';
 
 const SurveyForm = () => {
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  
   const { currentUser } = useSelector(state => state.user);
   const navigate = useNavigate();
 
@@ -112,7 +115,7 @@ const SurveyForm = () => {
     };
 
     try {
-        const res = await fetch('http://localhost:3000/api/survey/surveyQuestion', {
+        const res = await fetch(`${API_URL}/api/survey/surveyQuestion`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(surveyData),

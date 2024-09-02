@@ -10,6 +10,8 @@ export default function CreateGroup() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
   useEffect(() => {
     if (currentUser) {
       if (currentUser.role !== 'Admin' && currentUser.role !== 'Group Admin') {
@@ -27,7 +29,7 @@ export default function CreateGroup() {
     e.preventDefault();
 
     try {
-      const res = await fetch('/api/group/createGroup', {  
+      const res = await fetch(`${API_URL}/api/group/createGroup`, {  
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

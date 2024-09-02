@@ -6,6 +6,9 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export default function DashSurveys() {
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
   const { currentUser } = useSelector((state) => state.user);
   const [userSurveys, setUserSurveys] = useState([]);
   const [filteredSurveys, setFilteredSurveys] = useState([]);
@@ -31,9 +34,9 @@ export default function DashSurveys() {
       let url;
   
       if (currentUser.role === 'Admin' || currentUser.role === 'Group Admin') {
-        url = '/api/survey/getSurveys';
+        url = `${API_URL}/api/survey/getSurveys`;
       } else if (currentUser.role === 'normalUser') {
-        url = `/api/survey/getSurveys?userId=${currentUser._id}`;
+        url = `${API_URL}/api/survey/getSurveys?userId=${currentUser._id}`;
       } else {
         console.error("Access denied: Unrecognized role.");
         return;
@@ -95,7 +98,7 @@ export default function DashSurveys() {
     setShowModal(false);
 
     try {
-      const res = await fetch(`/api/survey/deleteSurvey/${selectedSurveyId}`, {
+      const res = await fetch(`${API_URL}/api/survey/deleteSurvey/${selectedSurveyId}`, {
         method: 'DELETE',
         credentials: 'include', // Include cookies with the request
       });

@@ -4,6 +4,9 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
 
 export default function DashUsers() {
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
   const { currentUser } = useSelector((state) => state.user);
   const [users, setUsers] = useState([]);
   const [groups, setGroups] = useState([]);
@@ -18,7 +21,7 @@ export default function DashUsers() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch('/api/user/getUsers');
+        const res = await fetch(`${API_URL}/api/user/getUsers`);
         if (res.ok) {
           const data = await res.json();
           if (data && Array.isArray(data.users)) {
@@ -37,7 +40,7 @@ export default function DashUsers() {
 
     const fetchGroups = async () => {
       try {
-        const res = await fetch('/api/group/allGroup');
+        const res = await fetch(`${API_URL}/api/group/allGroup`);
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data)) {
@@ -62,7 +65,7 @@ export default function DashUsers() {
   const handleShowMore = async () => {
     const startIndex = users.length;
     try {
-      const res = await fetch(`/api/user/getUsers?startIndex=${startIndex}`);
+      const res = await fetch(`${API_URL}/api/user/getUsers?startIndex=${startIndex}`);
       if (res.ok) {
         const data = await res.json();
         if (data && Array.isArray(data.users)) {
@@ -81,7 +84,7 @@ export default function DashUsers() {
 
   const handleDeleteUser = async () => {
     try {
-      const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
+      const res = await fetch(`${API_URL}/api/user/delete/${userIdToDelete}`, {
         method: 'DELETE',
       });
       if (res.ok) {
@@ -104,7 +107,7 @@ export default function DashUsers() {
 
   const handleAssignRole = async () => {
     try {
-      const res = await fetch('/api/user/assignRole', {
+      const res = await fetch(`${API_URL}/api/user/assignRole`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

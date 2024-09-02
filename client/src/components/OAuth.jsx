@@ -9,6 +9,8 @@ import { signInSuccess } from '../redux/user/userSlice';
 
 export default function OAuth() {
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
     const navigate = useNavigate();
     const auth = getAuth(app);
     const dispatch = useDispatch();
@@ -18,7 +20,7 @@ export default function OAuth() {
         provider.setCustomParameters({ prompt: 'select_account' })
         try {
             const resultsFromGoogle = await signInWithPopup(auth, provider);
-            const res = await fetch('/api/auth/google', {
+            const res = await fetch(`${API_URL}/api/auth/google`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 

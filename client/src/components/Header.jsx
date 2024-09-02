@@ -7,6 +7,9 @@ import { toggleTheme } from '../redux/theme/themeSlice';
 import { signoutSuccess } from '../redux/user/userSlice';
 
 export default function Header() {
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const path = useLocation().pathname;
@@ -15,7 +18,7 @@ export default function Header() {
 
   const handleSignout = async () => {
     try {
-      const res = await fetch('api/user/signout', {
+      const res = await fetch(`${API_URL}/api/user/signout`, {
         method: 'POST',
       });
       const data = await res.json();

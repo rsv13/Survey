@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 export default function DashboardComp() {
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
   const [ users, setUsers] = useState([])
   const [surveys, setSurveys] = useState([])
   const [totalUsers, setTotalUsers] = useState(0)
@@ -17,7 +19,7 @@ export default function DashboardComp() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch('/api/user/getUsers?limit=5');
+        const res = await fetch(`${API_URL}/api/user/getUsers?limit=5`);
         const data = await res.json();
         if (res.ok) {
           setUsers(data.users);
@@ -30,7 +32,7 @@ export default function DashboardComp() {
     };
     const fetchSurveys = async () => {
       try {
-        const res = await fetch('/api/survey/getSurveys?limit=5');
+        const res = await fetch(`${API_URL}/api/survey/getSurveys?limit=5`);
         const data = await res.json();
         if (res.ok) {
           setSurveys(data.surveys);

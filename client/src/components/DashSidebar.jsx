@@ -8,6 +8,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { signoutSuccess } from '../redux/user/userSlice';
 
 export default function DashSidebar() {
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
   const { currentUser } = useSelector((state) => state.user);
   const location = useLocation();
   const dispatch = useDispatch();
@@ -24,7 +27,7 @@ export default function DashSidebar() {
 
   const handleSignout = async () => {
     try {
-      const res = await fetch('/api/user/signout', {
+      const res = await fetch(`${API_URL}/api/user/signout`, {
         method: 'POST',
       });
       const data = await res.json();

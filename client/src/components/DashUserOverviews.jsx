@@ -8,6 +8,9 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export default function DashUserOverview() {
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
   const [usersInGroups, setUsersInGroups] = useState([]);
   const [usersNotInGroups, setUsersNotInGroups] = useState([]);
   const [filteredUsersInGroups, setFilteredUsersInGroups] = useState([]);
@@ -35,7 +38,7 @@ export default function DashUserOverview() {
 
   const fetchUsersData = async () => {
     try {
-      const res = await fetch('/api/user/users-grouped-and-ungrouped', {
+      const res = await fetch(`${API_URL}/api/user/users-grouped-and-ungrouped`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -55,7 +58,7 @@ export default function DashUserOverview() {
 
   const fetchGroupsData = async () => {
     try {
-      const res = await fetch('/api/group/allGroup', {
+      const res = await fetch(`${API_URL}/api/group/allGroup`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -112,7 +115,7 @@ export default function DashUserOverview() {
     }
   
     try {
-      const res = await fetch('/api/group/add-user', {
+      const res = await fetch(`${API_URL}/api/group/add-user`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ groupId: selectedGroupId, userId: selectedUserId }),

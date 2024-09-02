@@ -6,6 +6,9 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export default function DashGroups() {
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const [groups, setGroups] = useState([]);
@@ -17,10 +20,10 @@ export default function DashGroups() {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        let url = '/api/group/allGroup'; // Default URL for Admins and Group Admins
+        let url = `${API_URL}/api/group/allGroup`; // Default URL for Admins and Group Admins
 
         if (currentUser.role === 'Group Admin') {
-          url = '/api/group/group-admin/groups'; // URL for Group Admins
+          url = `${API_URL}/api/group/group-admin/groups`; // URL for Group Admins
         }
 
         const res = await fetch(url, {
@@ -61,7 +64,7 @@ export default function DashGroups() {
 
   const handleDeleteGroup = async () => {
     try {
-      const res = await fetch(`/api/group/${groupIdToDelete}`, {
+      const res = await fetch(`${API_URL}/api/group/${groupIdToDelete}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${currentUser.token}`,

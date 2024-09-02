@@ -5,6 +5,9 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
 
 export default function DashGroupUsers() {
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
   const { currentUser } = useSelector((state) => state.user); 
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -23,7 +26,7 @@ export default function DashGroupUsers() {
       }
 
       try {
-        const res = await fetch(`/api/group/${groupId}/users`, {
+        const res = await fetch(`${API_URL}/api/group/${groupId}/users`, {
           headers: {
             'Authorization': `Bearer ${currentUser.token}`, // Include token in headers
           },
@@ -60,7 +63,7 @@ export default function DashGroupUsers() {
 
   const handleDeleteUser = async () => {
     try {
-      const res = await fetch(`/api/group/${groupId}/users/${userIdToDelete}`, {
+      const res = await fetch(`${API_URL}/api/group/${groupId}/users/${userIdToDelete}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${currentUser.token}`, // Include token in headers
