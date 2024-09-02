@@ -6,12 +6,6 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     port: process.env.PORT || 3000,
-    proxy: {
-      "/api": {
-        target: import.meta.env.VITE_API_URL || "http://localhost:3000",
-        secure: false,
-      },
-    },
     plugins: [react()],
   },
 });
