@@ -1,10 +1,11 @@
-* Project Title: South Wales Social Well-Being Scale Survey
 
-* Description
+# Project Title: South Wales Social Well-Being Scale Survey
+
+## Description
 
 This project involves the development of a web application designed to facilitate the South Wales Social Well-Being Scale Survey. The application allows users to complete a survey aimed at understanding various social well-being factors in the community. It is built using the MERN stack (MongoDB, Express, React.js, and Node.js), along with Flowbite and Tailwind CSS for the frontend.
 
-* Table of Contents
+## Table of Contents
 
 - [Features](#features)
 - [Technologies Used](#technologies-used)
@@ -14,7 +15,7 @@ This project involves the development of a web application designed to facilitat
 - [Acknowledgements](#acknowledgements)
 - [License](#license)
 
-* Features
+## Features
 
 - Single survey form for all users, regardless of roles.
 - 14 mandatory questions with radio button selections.
@@ -22,7 +23,7 @@ This project involves the development of a web application designed to facilitat
 - User-friendly interface with responsive design.
 - Secure password handling using bcrypt and token storage in cookies.
 
-* Technologies Used
+## Technologies Used
 
 - **Frontend:** React.js, Flowbite, Tailwind CSS
 - **Backend:** Node.js, Express
@@ -30,7 +31,7 @@ This project involves the development of a web application designed to facilitat
 - **State Management:** Redux Toolkit
 - **Deployment:** Render.com
 
-* Installation
+## Installation
 
 To set up the project locally, follow these steps:
 
@@ -56,14 +57,14 @@ npm run dev
 ```
 Open your browser and navigate to `http://localhost:3000` to access the application.
 
-* Contributing
+## Contributing
 
 Contributions are welcome! If you'd like to contribute, please fork the repository and submit a pull request with your changes.
 
-* Acknowledgements
+## Acknowledgements
 
 Special thanks to my primary supervisor, Professor Andrew Ware, and all the stakeholders for their guidance and support throughout this project.
 
-* License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
