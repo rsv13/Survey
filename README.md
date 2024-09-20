@@ -22,6 +22,7 @@ This project involves the development of a web application designed to facilitat
 - Search functionality for survey data management by admins.
 - User-friendly interface with responsive design.
 - Secure password handling using bcrypt and token storage in cookies.
+- Unique survey username to maintain confidentiality.
 
 ## Technologies Used
 
