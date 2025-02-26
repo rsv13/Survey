@@ -1,14 +1,15 @@
 import React from 'react';
+import ProjectsImage from '../../src/assets/icons/Project-banner.avif';
 
 export default function Projects() {
   return (
     <div className='bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100'>
       {/* Hero Section */}
       <section
-        className='relative text-white py-20 bg-cover bg-center'
-        style={{ backgroundImage: `url(${ProjectsImage})` }}
-      >
-        <div className='container mx-auto px-6 text-center bg-black bg-opacity-50 py-10 rounded-lg'>
+              className="relative bg-cover bg-center text-white py-20"
+              style={{ backgroundImage: `url(${ProjectsImage})` }}
+            >
+        <div className='container mx-auto px-6 text-center'>
           <h1 className='text-4xl font-bold mb-4'>Our Projects</h1>
           <p className='text-lg mb-6'>
             Explore our ongoing projects and research initiatives aimed at enhancing social well-being.
